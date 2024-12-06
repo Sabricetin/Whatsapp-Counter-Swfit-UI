@@ -11,7 +11,7 @@ import SwiftUI
 struct Whatsapp_CounterApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            MainView()
         }
     }
 }

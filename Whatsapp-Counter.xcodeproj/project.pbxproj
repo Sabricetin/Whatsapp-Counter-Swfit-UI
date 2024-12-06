@@ -7,6 +7,25 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1E42EDEA2D02DD6900203F39 /* AnalysisView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E42EDE22D02DD6900203F39 /* AnalysisView.swift */; };
+		1E42EDEB2D02DD6900203F39 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E42EDE42D02DD6900203F39 /* HomeView.swift */; };
+		1E42EDEC2D02DD6900203F39 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E42EDE52D02DD6900203F39 /* MainView.swift */; };
+		1E42EDED2D02DD6900203F39 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E42EDE72D02DD6900203F39 /* SettingsView.swift */; };
+		1E42EDFC2D02DD7600203F39 /* AnalysisViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E42EDF72D02DD7600203F39 /* AnalysisViewModel.swift */; };
+		1E42EDFD2D02DD7600203F39 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E42EDF82D02DD7600203F39 /* HomeViewModel.swift */; };
+		1E42EDFE2D02DD7600203F39 /* MainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E42EDF92D02DD7600203F39 /* MainViewModel.swift */; };
+		1E42EDFF2D02DD7600203F39 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E42EDFA2D02DD7600203F39 /* SettingsViewModel.swift */; };
+		1E42EE022D02DD9800203F39 /* ChatAnalysis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E42EE002D02DD9800203F39 /* ChatAnalysis.swift */; };
+		1E42EE052D02DDA000203F39 /* FileAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E42EE032D02DDA000203F39 /* FileAnalyzer.swift */; };
+		1E42EE082D02DDA800203F39 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E42EE062D02DDA800203F39 /* Constants.swift */; };
+		1E42EE0B2D02DDF800203F39 /* WhatsApp_CounterApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E42EE092D02DDF800203F39 /* WhatsApp_CounterApp.swift */; };
+		1E42EE0D2D02DF2900203F39 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E42EE0C2D02DF2900203F39 /* LoadingView.swift */; };
+		1E42EE0F2D02DFF900203F39 /* AnalysisModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E42EE0E2D02DFF900203F39 /* AnalysisModels.swift */; };
+		1E42EE122D02E1CE00203F39 /* DocumentPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E42EE102D02E1CE00203F39 /* DocumentPicker.swift */; };
+		1E42EE142D02E3DD00203F39 /* FilePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E42EE132D02E3DD00203F39 /* FilePickerView.swift */; };
+		1E42EE172D02E5F100203F39 /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 1E42EE162D02E5F100203F39 /* ZIPFoundation */; };
+		1E42EE192D02E71000203F39 /* AnalysisStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E42EE182D02E71000203F39 /* AnalysisStorage.swift */; };
+		1E42EE1B2D02EC6F00203F39 /* AnalysisOptionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E42EE1A2D02EC6F00203F39 /* AnalysisOptionsView.swift */; };
 		1ED542352D02DC2600F2BFA9 /* Whatsapp_CounterApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ED542342D02DC2600F2BFA9 /* Whatsapp_CounterApp.swift */; };
 		1ED542372D02DC2600F2BFA9 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ED542362D02DC2600F2BFA9 /* ContentView.swift */; };
 		1ED542392D02DC2700F2BFA9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1ED542382D02DC2700F2BFA9 /* Assets.xcassets */; };
@@ -14,6 +33,24 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1E42EDE22D02DD6900203F39 /* AnalysisView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalysisView.swift; sourceTree = "<group>"; };
+		1E42EDE42D02DD6900203F39 /* HomeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		1E42EDE52D02DD6900203F39 /* MainView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
+		1E42EDE72D02DD6900203F39 /* SettingsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		1E42EDF72D02DD7600203F39 /* AnalysisViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalysisViewModel.swift; sourceTree = "<group>"; };
+		1E42EDF82D02DD7600203F39 /* HomeViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
+		1E42EDF92D02DD7600203F39 /* MainViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainViewModel.swift; sourceTree = "<group>"; };
+		1E42EDFA2D02DD7600203F39 /* SettingsViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
+		1E42EE002D02DD9800203F39 /* ChatAnalysis.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatAnalysis.swift; sourceTree = "<group>"; };
+		1E42EE032D02DDA000203F39 /* FileAnalyzer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileAnalyzer.swift; sourceTree = "<group>"; };
+		1E42EE062D02DDA800203F39 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		1E42EE092D02DDF800203F39 /* WhatsApp_CounterApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WhatsApp_CounterApp.swift; sourceTree = "<group>"; };
+		1E42EE0C2D02DF2900203F39 /* LoadingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
+		1E42EE0E2D02DFF900203F39 /* AnalysisModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalysisModels.swift; sourceTree = "<group>"; };
+		1E42EE102D02E1CE00203F39 /* DocumentPicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DocumentPicker.swift; sourceTree = "<group>"; };
+		1E42EE132D02E3DD00203F39 /* FilePickerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilePickerView.swift; sourceTree = "<group>"; };
+		1E42EE182D02E71000203F39 /* AnalysisStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalysisStorage.swift; sourceTree = "<group>"; };
+		1E42EE1A2D02EC6F00203F39 /* AnalysisOptionsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalysisOptionsView.swift; sourceTree = "<group>"; };
 		1ED542312D02DC2600F2BFA9 /* Whatsapp-Counter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Whatsapp-Counter.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1ED542342D02DC2600F2BFA9 /* Whatsapp_CounterApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Whatsapp_CounterApp.swift; sourceTree = "<group>"; };
 		1ED542362D02DC2600F2BFA9 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -26,15 +63,114 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1E42EE172D02E5F100203F39 /* ZIPFoundation in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1E42EDE32D02DD6900203F39 /* Analysis */ = {
+			isa = PBXGroup;
+			children = (
+				1E42EDE22D02DD6900203F39 /* AnalysisView.swift */,
+				1E42EE1A2D02EC6F00203F39 /* AnalysisOptionsView.swift */,
+				1E42EE0C2D02DF2900203F39 /* LoadingView.swift */,
+			);
+			path = Analysis;
+			sourceTree = "<group>";
+		};
+		1E42EDE62D02DD6900203F39 /* Main */ = {
+			isa = PBXGroup;
+			children = (
+				1E42EDE42D02DD6900203F39 /* HomeView.swift */,
+				1E42EDE52D02DD6900203F39 /* MainView.swift */,
+			);
+			path = Main;
+			sourceTree = "<group>";
+		};
+		1E42EDE82D02DD6900203F39 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				1E42EDE72D02DD6900203F39 /* SettingsView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		1E42EDE92D02DD6900203F39 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				1E42EDE32D02DD6900203F39 /* Analysis */,
+				1E42EDE62D02DD6900203F39 /* Main */,
+				1E42EE112D02E1CE00203F39 /* Common */,
+				1E42EDE82D02DD6900203F39 /* Settings */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		1E42EDFB2D02DD7600203F39 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				1E42EDF72D02DD7600203F39 /* AnalysisViewModel.swift */,
+				1E42EDF82D02DD7600203F39 /* HomeViewModel.swift */,
+				1E42EDF92D02DD7600203F39 /* MainViewModel.swift */,
+				1E42EDFA2D02DD7600203F39 /* SettingsViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		1E42EE012D02DD9800203F39 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				1E42EE002D02DD9800203F39 /* ChatAnalysis.swift */,
+				1E42EE0E2D02DFF900203F39 /* AnalysisModels.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		1E42EE042D02DDA000203F39 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				1E42EE032D02DDA000203F39 /* FileAnalyzer.swift */,
+				1E42EE182D02E71000203F39 /* AnalysisStorage.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		1E42EE072D02DDA800203F39 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				1E42EE062D02DDA800203F39 /* Constants.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		1E42EE0A2D02DDF800203F39 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				1E42EE092D02DDF800203F39 /* WhatsApp_CounterApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		1E42EE112D02E1CE00203F39 /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				1E42EE102D02E1CE00203F39 /* DocumentPicker.swift */,
+				1E42EE132D02E3DD00203F39 /* FilePickerView.swift */,
+			);
+			path = Common;
+			sourceTree = "<group>";
+		};
 		1ED542282D02DC2600F2BFA9 = {
 			isa = PBXGroup;
 			children = (
+				1E42EE0A2D02DDF800203F39 /* App */,
+				1E42EDE92D02DD6900203F39 /* Views */,
+				1E42EDFB2D02DD7600203F39 /* ViewModels */,
+				1E42EE012D02DD9800203F39 /* Models */,
+				1E42EE042D02DDA000203F39 /* Services */,
+				1E42EE072D02DDA800203F39 /* Utils */,
 				1ED542332D02DC2600F2BFA9 /* Whatsapp-Counter */,
 				1ED542322D02DC2600F2BFA9 /* Products */,
 			);
@@ -83,6 +219,9 @@
 			dependencies = (
 			);
 			name = "Whatsapp-Counter";
+			packageProductDependencies = (
+				1E42EE162D02E5F100203F39 /* ZIPFoundation */,
+			);
 			productName = "Whatsapp-Counter";
 			productReference = 1ED542312D02DC2600F2BFA9 /* Whatsapp-Counter.app */;
 			productType = "com.apple.product-type.application";
@@ -111,6 +250,9 @@
 				Base,
 			);
 			mainGroup = 1ED542282D02DC2600F2BFA9;
+			packageReferences = (
+				1E42EE152D02E5F100203F39 /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
+			);
 			productRefGroup = 1ED542322D02DC2600F2BFA9 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -138,7 +280,25 @@
 			buildActionMask = 2147483647;
 			files = (
 				1ED542372D02DC2600F2BFA9 /* ContentView.swift in Sources */,
+				1E42EDEB2D02DD6900203F39 /* HomeView.swift in Sources */,
+				1E42EE142D02E3DD00203F39 /* FilePickerView.swift in Sources */,
+				1E42EDEA2D02DD6900203F39 /* AnalysisView.swift in Sources */,
+				1E42EDFE2D02DD7600203F39 /* MainViewModel.swift in Sources */,
+				1E42EE122D02E1CE00203F39 /* DocumentPicker.swift in Sources */,
+				1E42EE022D02DD9800203F39 /* ChatAnalysis.swift in Sources */,
+				1E42EDED2D02DD6900203F39 /* SettingsView.swift in Sources */,
+				1E42EDFD2D02DD7600203F39 /* HomeViewModel.swift in Sources */,
+				1E42EE0F2D02DFF900203F39 /* AnalysisModels.swift in Sources */,
+				1E42EE082D02DDA800203F39 /* Constants.swift in Sources */,
+				1E42EE0D2D02DF2900203F39 /* LoadingView.swift in Sources */,
+				1E42EE192D02E71000203F39 /* AnalysisStorage.swift in Sources */,
+				1E42EDEC2D02DD6900203F39 /* MainView.swift in Sources */,
+				1E42EDFC2D02DD7600203F39 /* AnalysisViewModel.swift in Sources */,
+				1E42EE1B2D02EC6F00203F39 /* AnalysisOptionsView.swift in Sources */,
 				1ED542352D02DC2600F2BFA9 /* Whatsapp_CounterApp.swift in Sources */,
+				1E42EDFF2D02DD7600203F39 /* SettingsViewModel.swift in Sources */,
+				1E42EE0B2D02DDF800203F39 /* WhatsApp_CounterApp.swift in Sources */,
+				1E42EE052D02DDA000203F39 /* FileAnalyzer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -344,6 +504,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		1E42EE152D02E5F100203F39 /* XCRemoteSwiftPackageReference "ZIPFoundation" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/weichsel/ZIPFoundation";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.9.19;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		1E42EE162D02E5F100203F39 /* ZIPFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1E42EE152D02E5F100203F39 /* XCRemoteSwiftPackageReference "ZIPFoundation" */;
+			productName = ZIPFoundation;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 1ED542292D02DC2600F2BFA9 /* Project object */;
 }
