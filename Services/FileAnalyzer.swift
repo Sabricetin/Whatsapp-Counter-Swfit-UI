@@ -43,6 +43,10 @@ class FileAnalyzer {
         var participantMessages: [String: Int] = [:]
         var participantMedia: [String: Int] = [:]
         var dates = Set<String>() // Tarih string'lerini tut
+        var dailyMessageCounts: [String: Int] = [:] // Günlük mesaj sayıları
+        var dailyMediaCounts: [String: Int] = [:] // Günlük medya sayıları
+        var hourlyMessageCounts: [Int: Int] = [:] // Saatlik mesaj sayıları
+        var hourlyMediaCounts: [Int: Int] = [:] // Saatlik medya sayıları
         
         let messagePattern = try? NSRegularExpression(
             pattern: "\\[(\\d{2}\\.\\d{2}\\.\\d{4} \\d{2}:\\d{2}:\\d{2})\\] ([^:]+): (.*)",
@@ -63,7 +67,20 @@ class FileAnalyzer {
                     let name = String(line[nameRange]).trimmingCharacters(in: .whitespaces)
                     let message = String(line[messageRange])
                     
-                    dates.insert(String(dateStr.prefix(10))) // Sadece tarihi al (saat olmadan)
+                    // Tarih işlemleri
+                    let dateOnly = String(dateStr.prefix(10))
+                    if let date = dateFormatter.date(from: dateStr) {
+                        let hour = Calendar.current.component(.hour, from: date)
+                        hourlyMessageCounts[hour, default: 0] += 1
+                        dailyMessageCounts[dateOnly, default: 0] += 1
+                        
+                        if message.contains("<Media omitted>") || message.contains("‎<attached:") {
+                            hourlyMediaCounts[hour, default: 0] += 1
+                            dailyMediaCounts[dateOnly, default: 0] += 1
+                        }
+                    }
+                    
+                    dates.insert(dateOnly)
                     participantMessages[name, default: 0] += 1
                     
                     if message.contains("<Media omitted>") || message.contains("‎<attached:") {
@@ -82,13 +99,35 @@ class FileAnalyzer {
             )
         }.sorted { $0.messageCount > $1.messageCount }
         
+        // Günlük istatistikleri oluştur
+        let dailyStats = dailyMessageCounts.map { date, count in
+            DailyStats(
+                id: UUID(),
+                date: date,
+                messageCount: count,
+                mediaCount: dailyMediaCounts[date] ?? 0
+            )
+        }.sorted { $0.date < $1.date }
+        
+        // Saatlik istatistikleri oluştur
+        let hourlyStats = (0...23).map { hour in
+            HourlyStats(
+                id: UUID(),
+                hour: hour,
+                messageCount: hourlyMessageCounts[hour] ?? 0,
+                mediaCount: hourlyMediaCounts[hour] ?? 0
+            )
+        }
+        
         return AnalysisSummary(
             totalMessages: participantMessages.values.reduce(0, +),
             totalMedia: participantMedia.values.reduce(0, +),
             activeDays: dates.count,
             totalParticipants: participantMessages.count,
             activeParticipants: participantMessages.filter { $0.value > 0 }.count,
-            participantStats: participantStats
+            participantStats: participantStats,
+            dailyStats: dailyStats,
+            hourlyStats: hourlyStats
         )
     }
     

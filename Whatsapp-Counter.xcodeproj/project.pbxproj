@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1E2D02572D0642BF003903E7 /* ActivityChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E2D02562D0642BF003903E7 /* ActivityChartView.swift */; };
+		1E2D02592D0643A7003903E7 /* ParticipantsDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E2D02582D0643A7003903E7 /* ParticipantsDetailView.swift */; };
+		1E2D025B2D0643AE003903E7 /* PieChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E2D025A2D0643AE003903E7 /* PieChartView.swift */; };
+		1E2D025E2D06444B003903E7 /* Color+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E2D025C2D06444B003903E7 /* Color+Hex.swift */; };
+		1E2D02622D064EF1003903E7 /* SavedAnalysesList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E2D02612D064EF1003903E7 /* SavedAnalysesList.swift */; };
 		1E3992CD2D0487E10079070A /* WhatsApp_CounterApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E3992CB2D0487E10079070A /* WhatsApp_CounterApp.swift */; };
 		1E3992D12D0487E80079070A /* AnalysisModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E3992CE2D0487E80079070A /* AnalysisModels.swift */; };
 		1E3992D22D0487E80079070A /* ChatAnalysis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E3992CF2D0487E80079070A /* ChatAnalysis.swift */; };
@@ -33,6 +38,11 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1E2D02562D0642BF003903E7 /* ActivityChartView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActivityChartView.swift; sourceTree = "<group>"; };
+		1E2D02582D0643A7003903E7 /* ParticipantsDetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParticipantsDetailView.swift; sourceTree = "<group>"; };
+		1E2D025A2D0643AE003903E7 /* PieChartView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PieChartView.swift; sourceTree = "<group>"; };
+		1E2D025C2D06444B003903E7 /* Color+Hex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Color+Hex.swift"; sourceTree = "<group>"; };
+		1E2D02612D064EF1003903E7 /* SavedAnalysesList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SavedAnalysesList.swift; sourceTree = "<group>"; };
 		1E3992CB2D0487E10079070A /* WhatsApp_CounterApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WhatsApp_CounterApp.swift; sourceTree = "<group>"; };
 		1E3992CE2D0487E80079070A /* AnalysisModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalysisModels.swift; sourceTree = "<group>"; };
 		1E3992CF2D0487E80079070A /* ChatAnalysis.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatAnalysis.swift; sourceTree = "<group>"; };
@@ -73,6 +83,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1E2D025D2D06444B003903E7 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				1E2D025C2D06444B003903E7 /* Color+Hex.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
 		1E3992CC2D0487E10079070A /* App */ = {
 			isa = PBXGroup;
 			children = (
@@ -121,9 +139,13 @@
 		1E3992E72D0487FD0079070A /* Analysis */ = {
 			isa = PBXGroup;
 			children = (
+				1E2D02562D0642BF003903E7 /* ActivityChartView.swift */,
 				1E3992E42D0487FD0079070A /* AnalysisOptionsView.swift */,
 				1E3992E52D0487FD0079070A /* AnalysisView.swift */,
 				1E3992E62D0487FD0079070A /* LoadingView.swift */,
+				1E2D02582D0643A7003903E7 /* ParticipantsDetailView.swift */,
+				1E2D025A2D0643AE003903E7 /* PieChartView.swift */,
+				1E2D02612D064EF1003903E7 /* SavedAnalysesList.swift */,
 			);
 			path = Analysis;
 			sourceTree = "<group>";
@@ -169,6 +191,7 @@
 			isa = PBXGroup;
 			children = (
 				1E3992CC2D0487E10079070A /* App */,
+				1E2D025D2D06444B003903E7 /* Extensions */,
 				1E3992D02D0487E80079070A /* Models */,
 				1E3992D52D0487ED0079070A /* Services */,
 				1E3992D92D0487F20079070A /* Utils */,
@@ -321,19 +344,24 @@
 			buildActionMask = 2147483647;
 			files = (
 				1EE386C52D02C80000CAC956 /* ContentView.swift in Sources */,
+				1E2D02592D0643A7003903E7 /* ParticipantsDetailView.swift in Sources */,
 				1E3992D12D0487E80079070A /* AnalysisModels.swift in Sources */,
 				1E3992F12D0487FD0079070A /* AnalysisOptionsView.swift in Sources */,
 				1E3992E12D0487F60079070A /* HomeViewModel.swift in Sources */,
+				1E2D025B2D0643AE003903E7 /* PieChartView.swift in Sources */,
 				1E3992F32D0487FD0079070A /* LoadingView.swift in Sources */,
 				1E3992D22D0487E80079070A /* ChatAnalysis.swift in Sources */,
 				1E3992CD2D0487E10079070A /* WhatsApp_CounterApp.swift in Sources */,
 				1E3992E22D0487F60079070A /* MainViewModel.swift in Sources */,
 				1E3992F42D0487FD0079070A /* DocumentPicker.swift in Sources */,
 				1E3992F72D0487FD0079070A /* MainView.swift in Sources */,
+				1E2D02572D0642BF003903E7 /* ActivityChartView.swift in Sources */,
 				1E3992E02D0487F60079070A /* AnalysisViewModel.swift in Sources */,
 				1E3992F22D0487FD0079070A /* AnalysisView.swift in Sources */,
 				1E3992F52D0487FD0079070A /* FilePickerView.swift in Sources */,
 				1E3992D62D0487ED0079070A /* AnalysisStorage.swift in Sources */,
+				1E2D02622D064EF1003903E7 /* SavedAnalysesList.swift in Sources */,
+				1E2D025E2D06444B003903E7 /* Color+Hex.swift in Sources */,
 				1E3992DA2D0487F20079070A /* Constants.swift in Sources */,
 				1E3992D72D0487ED0079070A /* FileAnalyzer.swift in Sources */,
 				1E3992F62D0487FD0079070A /* HomeView.swift in Sources */,

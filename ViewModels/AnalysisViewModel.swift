@@ -4,7 +4,7 @@ import Combine
 class AnalysisViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var analysis: AnalysisSummary?
-    @Published var chartData: [ChartData] = []
+    @Published var chartData: [ChartViewModel] = []
     @Published var details: [AnalysisDetail] = []
     @Published var savedAnalyses: [SavedAnalysis] = []
     
@@ -29,26 +29,43 @@ class AnalysisViewModel: ObservableObject {
     
     private func updateAnalysis(_ summary: AnalysisSummary) {
         self.analysis = summary
-        // Diğer verileri güncelle
         self.generateChartData()
         self.generateDetails()
     }
     
     private func generateChartData() {
-        // Chart verilerini oluştur
-        self.chartData = [
-            ChartData(date: Date(), count: 10),
-            ChartData(date: Date().addingTimeInterval(86400), count: 20),
-            ChartData(date: Date().addingTimeInterval(172800), count: 15)
-        ]
+        guard let analysis = analysis else { return }
+        self.chartData = analysis.dailyStats.map(ChartViewModel.init)
     }
     
     private func generateDetails() {
-        // Detayları oluştur
+        guard let analysis = analysis else { return }
+        
+        // En aktif günü bul
+        let mostActiveDay = analysis.dailyStats.max { $0.messageCount < $1.messageCount }
+        
+        // En aktif saati bul
+        let mostActiveHour = analysis.hourlyStats.max { $0.messageCount < $1.messageCount }
+        
+        // Ortalama mesaj/gün hesapla
+        let averageMessages = Double(analysis.totalMessages) / Double(analysis.activeDays)
+        
         self.details = [
-            AnalysisDetail(id: UUID(), title: "En Aktif Gün", value: "Pazartesi"),
-            AnalysisDetail(id: UUID(), title: "En Aktif Saat", value: "21:00"),
-            AnalysisDetail(id: UUID(), title: "Ortalama Mesaj/Gün", value: "33")
+            AnalysisDetail(
+                id: UUID(),
+                title: "En Aktif Gün",
+                value: mostActiveDay?.date ?? "Bilinmiyor"
+            ),
+            AnalysisDetail(
+                id: UUID(),
+                title: "En Aktif Saat",
+                value: mostActiveHour.map { String(format: "%02d:00", $0.hour) } ?? "Bilinmiyor"
+            ),
+            AnalysisDetail(
+                id: UUID(),
+                title: "Ortalama Mesaj/Gün",
+                value: String(format: "%.1f", averageMessages)
+            )
         ]
     }
     

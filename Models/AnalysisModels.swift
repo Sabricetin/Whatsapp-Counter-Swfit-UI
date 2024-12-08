@@ -14,6 +14,8 @@ struct AnalysisSummary: Codable {
     let totalParticipants: Int
     let activeParticipants: Int
     let participantStats: [ParticipantStat]
+    let dailyStats: [DailyStats]
+    let hourlyStats: [HourlyStats]
 }
 
 struct ParticipantStat: Codable, Identifiable {
@@ -23,18 +25,44 @@ struct ParticipantStat: Codable, Identifiable {
     let mediaCount: Int
     
     var messagePercentage: Double {
-        Double(messageCount) / Double(messageCount) * 100.0
+        guard totalMessages > 0 else { return 0 }
+        return Double(messageCount) / Double(totalMessages) * 100
+    }
+    
+    var totalMessages: Int {
+        messageCount + mediaCount
     }
 }
 
-struct ChartData: Identifiable {
-    let id = UUID()
-    let date: Date
-    let count: Int
+struct DailyStats: Codable, Identifiable {
+    let id: UUID
+    let date: String
+    let messageCount: Int
+    let mediaCount: Int
+}
+
+struct HourlyStats: Codable, Identifiable {
+    let id: UUID
+    let hour: Int
+    let messageCount: Int
+    let mediaCount: Int
 }
 
 struct AnalysisDetail: Identifiable {
     let id: UUID
     let title: String
     let value: String
+}
+
+struct ChartViewModel: Identifiable {
+    let id = UUID()
+    let date: String
+    let messageCount: Int
+    let mediaCount: Int
+    
+    init(from dailyStat: DailyStats) {
+        self.date = dailyStat.date
+        self.messageCount = dailyStat.messageCount
+        self.mediaCount = dailyStat.mediaCount
+    }
 } 

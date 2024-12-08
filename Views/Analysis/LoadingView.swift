@@ -2,6 +2,11 @@ import SwiftUI
 
 struct LoadingView: View {
     @State private var isAnimating = false
+    let progress: Double
+    
+    init(progress: Double = 0) {
+        self.progress = progress
+    }
     
     var body: some View {
         VStack {
@@ -18,6 +23,18 @@ struct LoadingView: View {
             Text("Analiz Ediliyor...")
                 .font(.headline)
                 .padding(.top)
+            
+            if progress > 0 {
+                ProgressView(value: progress)
+                    .progressViewStyle(.linear)
+                    .frame(width: 200)
+                    .padding(.top, 8)
+                
+                Text("\(Int(progress * 100))%")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .padding(.top, 4)
+            }
         }
         .onAppear {
             isAnimating = true
