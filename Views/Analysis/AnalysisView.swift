@@ -19,15 +19,18 @@ struct AnalysisView: View {
                                 }
                                 if #available(iOS 16.0, *) {
                                     PieChartView(participants: analysis.participantStats)
+                                    WordEmojiAnalysisView(
+                                        emojiStats: analysis.emojiStats,
+                                        wordStats: analysis.wordStats
+                                    )
+                                    if let mediaStats = viewModel.mediaStats {
+                                        MediaAnalysisView(stats: mediaStats)
+                                    }
                                     ActivityChartView(
                                         dailyStats: analysis.dailyStats,
                                         hourlyStats: analysis.hourlyStats
                                     )
                                     MessageChart(data: viewModel.chartData)
-                                } else {
-                                    Text("Grafik görüntüleme için iOS 16 veya üstü gereklidir")
-                                        .foregroundColor(.secondary)
-                                        .padding()
                                 }
                                 DetailsList(details: viewModel.details)
                             } else {
@@ -79,24 +82,10 @@ struct MessageChart: View {
     let data: [ChartViewModel]
     private let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.dateFormat = "dd.MM.yyyy"
-        formatter.locale = Locale(identifier: "tr_TR")
-        return formatter
-    }()
-    
-    private let outputFormatter: DateFormatter = {
-        let formatter = DateFormatter()
         formatter.dateFormat = "dd MMM"
         formatter.locale = Locale(identifier: "tr_TR")
         return formatter
     }()
-    
-    private func formatDate(_ dateString: String) -> String {
-        if let date = dateFormatter.date(from: dateString) {
-            return outputFormatter.string(from: date)
-        }
-        return dateString
-    }
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -107,16 +96,10 @@ struct MessageChart: View {
             Chart {
                 ForEach(data) { item in
                     BarMark(
-                        x: .value("Tarih", formatDate(item.date)),
+                        x: .value("Tarih", dateFormatter.string(from: item.date)),
                         y: .value("Mesaj", item.messageCount)
                     )
                     .foregroundStyle(Color.blue.gradient)
-                    
-                    BarMark(
-                        x: .value("Tarih", formatDate(item.date)),
-                        y: .value("Medya", item.mediaCount)
-                    )
-                    .foregroundStyle(Color.green.gradient)
                 }
             }
             .frame(height: 200)
@@ -137,8 +120,6 @@ struct MessageChart: View {
             HStack {
                 Label("Mesajlar", systemImage: "message.fill")
                     .foregroundColor(.blue)
-                Label("Medya", systemImage: "photo.fill")
-                    .foregroundColor(.green)
             }
             .font(.caption)
         }
@@ -151,6 +132,12 @@ struct MessageChart: View {
 
 struct SummaryCard: View {
     let analysis: AnalysisSummary
+    private let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "dd.MM.yyyy"
+        formatter.locale = Locale(identifier: "tr_TR")
+        return formatter
+    }()
     
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -160,15 +147,21 @@ struct SummaryCard: View {
             HStack {
                 StatView(title: "Toplam Mesaj", value: "\(analysis.totalMessages)")
                 Spacer()
-                StatView(title: "Toplam Medya", value: "\(analysis.totalMedia)")
+                StatView(title: "Toplam Kelime", value: "\(analysis.totalWords)")
                 Spacer()
-                StatView(title: "Aktif Gün", value: "\(analysis.activeDays)")
+                StatView(title: "Toplam Emoji", value: "\(analysis.emojiStats.totalCount)")
             }
             
             HStack {
-                StatView(title: "Toplam Katılımcı", value: "\(analysis.totalParticipants)")
+                StatView(title: "Benzersiz Kelime", value: "\(analysis.wordStats.uniqueCount)")
                 Spacer()
-                StatView(title: "Aktif Katılımcı", value: "\(analysis.activeParticipants)")
+                StatView(title: "Katılımcı Sayısı", value: "\(analysis.participantStats.count)")
+            }
+            
+            HStack {
+                StatView(title: "Başlangıç", value: dateFormatter.string(from: analysis.timeRange.start))
+                Spacer()
+                StatView(title: "Bitiş", value: dateFormatter.string(from: analysis.timeRange.end))
             }
         }
         .padding()

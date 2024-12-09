@@ -12,6 +12,11 @@
 		1E2D025B2D0643AE003903E7 /* PieChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E2D025A2D0643AE003903E7 /* PieChartView.swift */; };
 		1E2D025E2D06444B003903E7 /* Color+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E2D025C2D06444B003903E7 /* Color+Hex.swift */; };
 		1E2D02622D064EF1003903E7 /* SavedAnalysesList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E2D02612D064EF1003903E7 /* SavedAnalysesList.swift */; };
+		1E2D02642D065E35003903E7 /* WordEmojiAnalysisView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E2D02632D065E35003903E7 /* WordEmojiAnalysisView.swift */; };
+		1E2D02662D06D77C003903E7 /* MediaAnalysisView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E2D02652D06D77C003903E7 /* MediaAnalysisView.swift */; };
+		1E2D02682D06D821003903E7 /* MediaModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E2D02672D06D821003903E7 /* MediaModels.swift */; };
+		1E2D026A2D06D842003903E7 /* MediaAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E2D02692D06D842003903E7 /* MediaAnalyzer.swift */; };
+		1E2D026C2D06DD1E003903E7 /* MediaGalleryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E2D026B2D06DD1E003903E7 /* MediaGalleryView.swift */; };
 		1E3992CD2D0487E10079070A /* WhatsApp_CounterApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E3992CB2D0487E10079070A /* WhatsApp_CounterApp.swift */; };
 		1E3992D12D0487E80079070A /* AnalysisModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E3992CE2D0487E80079070A /* AnalysisModels.swift */; };
 		1E3992D22D0487E80079070A /* ChatAnalysis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E3992CF2D0487E80079070A /* ChatAnalysis.swift */; };
@@ -43,6 +48,11 @@
 		1E2D025A2D0643AE003903E7 /* PieChartView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PieChartView.swift; sourceTree = "<group>"; };
 		1E2D025C2D06444B003903E7 /* Color+Hex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Color+Hex.swift"; sourceTree = "<group>"; };
 		1E2D02612D064EF1003903E7 /* SavedAnalysesList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SavedAnalysesList.swift; sourceTree = "<group>"; };
+		1E2D02632D065E35003903E7 /* WordEmojiAnalysisView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WordEmojiAnalysisView.swift; sourceTree = "<group>"; };
+		1E2D02652D06D77C003903E7 /* MediaAnalysisView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaAnalysisView.swift; sourceTree = "<group>"; };
+		1E2D02672D06D821003903E7 /* MediaModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaModels.swift; sourceTree = "<group>"; };
+		1E2D02692D06D842003903E7 /* MediaAnalyzer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaAnalyzer.swift; sourceTree = "<group>"; };
+		1E2D026B2D06DD1E003903E7 /* MediaGalleryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaGalleryView.swift; sourceTree = "<group>"; };
 		1E3992CB2D0487E10079070A /* WhatsApp_CounterApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WhatsApp_CounterApp.swift; sourceTree = "<group>"; };
 		1E3992CE2D0487E80079070A /* AnalysisModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalysisModels.swift; sourceTree = "<group>"; };
 		1E3992CF2D0487E80079070A /* ChatAnalysis.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatAnalysis.swift; sourceTree = "<group>"; };
@@ -104,6 +114,7 @@
 			children = (
 				1E3992CE2D0487E80079070A /* AnalysisModels.swift */,
 				1E3992CF2D0487E80079070A /* ChatAnalysis.swift */,
+				1E2D02672D06D821003903E7 /* MediaModels.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -113,6 +124,7 @@
 			children = (
 				1E3992D32D0487ED0079070A /* AnalysisStorage.swift */,
 				1E3992D42D0487ED0079070A /* FileAnalyzer.swift */,
+				1E2D02692D06D842003903E7 /* MediaAnalyzer.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -143,9 +155,12 @@
 				1E3992E42D0487FD0079070A /* AnalysisOptionsView.swift */,
 				1E3992E52D0487FD0079070A /* AnalysisView.swift */,
 				1E3992E62D0487FD0079070A /* LoadingView.swift */,
+				1E2D02652D06D77C003903E7 /* MediaAnalysisView.swift */,
+				1E2D026B2D06DD1E003903E7 /* MediaGalleryView.swift */,
 				1E2D02582D0643A7003903E7 /* ParticipantsDetailView.swift */,
 				1E2D025A2D0643AE003903E7 /* PieChartView.swift */,
 				1E2D02612D064EF1003903E7 /* SavedAnalysesList.swift */,
+				1E2D02632D065E35003903E7 /* WordEmojiAnalysisView.swift */,
 			);
 			path = Analysis;
 			sourceTree = "<group>";
@@ -346,6 +361,7 @@
 				1EE386C52D02C80000CAC956 /* ContentView.swift in Sources */,
 				1E2D02592D0643A7003903E7 /* ParticipantsDetailView.swift in Sources */,
 				1E3992D12D0487E80079070A /* AnalysisModels.swift in Sources */,
+				1E2D02642D065E35003903E7 /* WordEmojiAnalysisView.swift in Sources */,
 				1E3992F12D0487FD0079070A /* AnalysisOptionsView.swift in Sources */,
 				1E3992E12D0487F60079070A /* HomeViewModel.swift in Sources */,
 				1E2D025B2D0643AE003903E7 /* PieChartView.swift in Sources */,
@@ -353,18 +369,22 @@
 				1E3992D22D0487E80079070A /* ChatAnalysis.swift in Sources */,
 				1E3992CD2D0487E10079070A /* WhatsApp_CounterApp.swift in Sources */,
 				1E3992E22D0487F60079070A /* MainViewModel.swift in Sources */,
+				1E2D02662D06D77C003903E7 /* MediaAnalysisView.swift in Sources */,
 				1E3992F42D0487FD0079070A /* DocumentPicker.swift in Sources */,
 				1E3992F72D0487FD0079070A /* MainView.swift in Sources */,
 				1E2D02572D0642BF003903E7 /* ActivityChartView.swift in Sources */,
 				1E3992E02D0487F60079070A /* AnalysisViewModel.swift in Sources */,
 				1E3992F22D0487FD0079070A /* AnalysisView.swift in Sources */,
 				1E3992F52D0487FD0079070A /* FilePickerView.swift in Sources */,
+				1E2D026C2D06DD1E003903E7 /* MediaGalleryView.swift in Sources */,
 				1E3992D62D0487ED0079070A /* AnalysisStorage.swift in Sources */,
 				1E2D02622D064EF1003903E7 /* SavedAnalysesList.swift in Sources */,
 				1E2D025E2D06444B003903E7 /* Color+Hex.swift in Sources */,
 				1E3992DA2D0487F20079070A /* Constants.swift in Sources */,
 				1E3992D72D0487ED0079070A /* FileAnalyzer.swift in Sources */,
 				1E3992F62D0487FD0079070A /* HomeView.swift in Sources */,
+				1E2D02682D06D821003903E7 /* MediaModels.swift in Sources */,
+				1E2D026A2D06D842003903E7 /* MediaAnalyzer.swift in Sources */,
 				1EE386C32D02C80000CAC956 /* whatsapp_CounterApp.swift in Sources */,
 				1E3992E32D0487F60079070A /* SettingsViewModel.swift in Sources */,
 				1E3992F82D0487FD0079070A /* SettingsView.swift in Sources */,

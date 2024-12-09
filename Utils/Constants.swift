@@ -11,6 +11,8 @@ enum Constants {
         static let fileReadError = "Dosya okunamadı"
         static let unsupportedFile = "Desteklenmeyen dosya formatı"
         static let parseError = "Dosya ayrıştırılamadı"
+        static let noMediaFound = "Medya dosyası bulunamadı"
+        static let zipExtractionError = "ZIP dosyası açılamadı"
     }
     
     enum FileTypes {
@@ -19,5 +21,6 @@ enum Constants {
     
     enum Notifications {
         static let newAnalysis = Notification.Name("newAnalysis")
+        static let newMediaAnalysis = Notification.Name("newMediaAnalysis")
     }
 } 

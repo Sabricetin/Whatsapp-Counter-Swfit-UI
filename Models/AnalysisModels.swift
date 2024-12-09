@@ -9,60 +9,78 @@ struct SavedAnalysis: Codable, Identifiable {
 
 struct AnalysisSummary: Codable {
     let totalMessages: Int
-    let totalMedia: Int
-    let activeDays: Int
-    let totalParticipants: Int
-    let activeParticipants: Int
+    let totalWords: Int
+    let timeRange: DateRange
     let participantStats: [ParticipantStat]
     let dailyStats: [DailyStats]
     let hourlyStats: [HourlyStats]
+    let emojiStats: EmojiStats
+    let wordStats: WordStats
 }
 
-struct ParticipantStat: Codable, Identifiable {
+struct ParticipantStat: Identifiable, Codable {
     let id: UUID
     let name: String
     let messageCount: Int
-    let mediaCount: Int
-    
-    var messagePercentage: Double {
-        guard totalMessages > 0 else { return 0 }
-        return Double(messageCount) / Double(totalMessages) * 100
-    }
-    
-    var totalMessages: Int {
-        messageCount + mediaCount
-    }
+    let wordCount: Int
+    let emojiCount: Int
+    let averageMessageLength: Double
+    let mostUsedEmojis: [EmojiStat]
+    let mostUsedWords: [WordStat]
 }
 
-struct DailyStats: Codable, Identifiable {
+struct DailyStats: Identifiable, Codable {
     let id: UUID
-    let date: String
+    let date: Date
     let messageCount: Int
-    let mediaCount: Int
 }
 
-struct HourlyStats: Codable, Identifiable {
+struct HourlyStats: Identifiable, Codable {
     let id: UUID
     let hour: Int
     let messageCount: Int
-    let mediaCount: Int
+}
+
+struct DateRange: Codable {
+    let start: Date
+    let end: Date
+}
+
+struct EmojiStats: Codable {
+    let totalCount: Int
+    let topEmojis: [EmojiStat]
+    let emojisByParticipant: [String: [EmojiStat]]
+}
+
+struct EmojiStat: Identifiable, Codable {
+    let id: UUID
+    let emoji: String
+    let count: Int
+    let percentage: Double
+}
+
+struct WordStats: Codable {
+    let totalCount: Int
+    let uniqueCount: Int
+    let topWords: [WordStat]
+    let wordsByParticipant: [String: [WordStat]]
+}
+
+struct WordStat: Identifiable, Codable {
+    let id: UUID
+    let word: String
+    let count: Int
+    let percentage: Double
 }
 
 struct AnalysisDetail: Identifiable {
-    let id: UUID
+    var id: UUID { UUID() }
     let title: String
     let value: String
 }
 
 struct ChartViewModel: Identifiable {
-    let id = UUID()
-    let date: String
+    let id: UUID
+    let date: Date
     let messageCount: Int
-    let mediaCount: Int
-    
-    init(from dailyStat: DailyStats) {
-        self.date = dailyStat.date
-        self.messageCount = dailyStat.messageCount
-        self.mediaCount = dailyStat.mediaCount
-    }
 } 

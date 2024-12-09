@@ -42,24 +42,10 @@ struct DailyActivityChart: View {
     let stats: [DailyStats]
     private let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.dateFormat = "dd.MM.yyyy"
-        formatter.locale = Locale(identifier: "tr_TR")
-        return formatter
-    }()
-    
-    private let outputFormatter: DateFormatter = {
-        let formatter = DateFormatter()
         formatter.dateFormat = "dd MMM"
         formatter.locale = Locale(identifier: "tr_TR")
         return formatter
     }()
-    
-    private func formatDate(_ dateString: String) -> String {
-        if let date = dateFormatter.date(from: dateString) {
-            return outputFormatter.string(from: date)
-        }
-        return dateString
-    }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -69,16 +55,10 @@ struct DailyActivityChart: View {
             Chart {
                 ForEach(stats) { stat in
                     BarMark(
-                        x: .value("Tarih", formatDate(stat.date)),
+                        x: .value("Tarih", dateFormatter.string(from: stat.date)),
                         y: .value("Mesaj", stat.messageCount)
                     )
                     .foregroundStyle(Color.blue.gradient)
-                    
-                    BarMark(
-                        x: .value("Tarih", formatDate(stat.date)),
-                        y: .value("Medya", stat.mediaCount)
-                    )
-                    .foregroundStyle(Color.green.gradient)
                 }
             }
             .frame(height: 200)
@@ -99,8 +79,6 @@ struct DailyActivityChart: View {
             HStack {
                 Label("Mesajlar", systemImage: "message.fill")
                     .foregroundColor(.blue)
-                Label("Medya", systemImage: "photo.fill")
-                    .foregroundColor(.green)
             }
             .font(.caption)
         }
@@ -128,13 +106,6 @@ struct HourlyActivityChart: View {
                     )
                     .foregroundStyle(Color.blue.gradient)
                     .interpolationMethod(.catmullRom)
-                    
-                    LineMark(
-                        x: .value("Saat", formatHour(stat.hour)),
-                        y: .value("Medya", stat.mediaCount)
-                    )
-                    .foregroundStyle(Color.green.gradient)
-                    .interpolationMethod(.catmullRom)
                 }
             }
             .frame(height: 200)
@@ -154,8 +125,6 @@ struct HourlyActivityChart: View {
             HStack {
                 Label("Mesajlar", systemImage: "message.fill")
                     .foregroundColor(.blue)
-                Label("Medya", systemImage: "photo.fill")
-                    .foregroundColor(.green)
             }
             .font(.caption)
         }

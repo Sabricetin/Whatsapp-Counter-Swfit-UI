@@ -2,6 +2,7 @@ import Foundation
 import Combine
 import SwiftUI
 import UniformTypeIdentifiers
+import OSLog
 
 class HomeViewModel: ObservableObject {
     @Published var isAnalyzing = false
@@ -12,6 +13,7 @@ class HomeViewModel: ObservableObject {
     
     private let fileAnalyzer = FileAnalyzer()
     private let analysisStorage = AnalysisStorage()
+    private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "WhatsApp-Counter", category: "HomeViewModel")
     
     enum FileType: CaseIterable {
         case txt
@@ -51,12 +53,16 @@ class HomeViewModel: ObservableObject {
     }
     
     func analyzeFile(url: URL, type: FileType) {
+        logger.info("Starting analysis for file: \(url.lastPathComponent)")
         isAnalyzing = true
         
         Task {
             do {
+                logger.info("Analyzing file...")
                 let analysis = try await fileAnalyzer.analyzeFile(at: url)
+                
                 await MainActor.run {
+                    logger.info("Analysis completed successfully")
                     analysisStorage.saveAnalysis(analysis, fileName: url.lastPathComponent)
                     NotificationCenter.default.post(
                         name: Constants.Notifications.newAnalysis,
@@ -65,21 +71,19 @@ class HomeViewModel: ObservableObject {
                     isAnalyzing = false
                     shouldNavigateToAnalysis = true
                 }
-            } catch FileAnalyzerError.fileReadError {
-                await MainActor.run {
-                    errorMessage = Constants.Error.fileReadError
-                    showError = true
-                    isAnalyzing = false
-                }
-            } catch FileAnalyzerError.unsupportedFileType {
-                await MainActor.run {
-                    errorMessage = Constants.Error.unsupportedFile
-                    showError = true
-                    isAnalyzing = false
-                }
             } catch {
                 await MainActor.run {
-                    errorMessage = error.localizedDescription
+                    logger.error("Analysis failed: \(error.localizedDescription)")
+                    switch error {
+                    case FileAnalyzerError.fileReadError:
+                        errorMessage = Constants.Error.fileReadError
+                    case FileAnalyzerError.unsupportedFileType:
+                        errorMessage = Constants.Error.unsupportedFile
+                    case FileAnalyzerError.parseError:
+                        errorMessage = Constants.Error.parseError
+                    default:
+                        errorMessage = error.localizedDescription
+                    }
                     showError = true
                     isAnalyzing = false
                 }

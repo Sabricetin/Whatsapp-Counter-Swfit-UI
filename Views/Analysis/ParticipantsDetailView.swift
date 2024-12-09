@@ -68,10 +68,21 @@ struct ParticipantRow: View {
                 Spacer()
                 
                 VStack(alignment: .leading) {
-                    Text("Medya")
+                    Text("Kelime")
                         .font(.caption)
                         .foregroundColor(.secondary)
-                    Text("\(participant.mediaCount)")
+                    Text("\(participant.wordCount)")
+                        .font(.subheadline)
+                        .bold()
+                }
+                
+                Spacer()
+                
+                VStack(alignment: .leading) {
+                    Text("Emoji")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    Text("\(participant.emojiCount)")
                         .font(.subheadline)
                         .bold()
                 }
