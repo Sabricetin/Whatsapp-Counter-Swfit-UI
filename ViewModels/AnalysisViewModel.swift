@@ -1,6 +1,7 @@
 import Foundation
 import Combine
 import SwiftUI
+import OSLog
 
 // Directly use the types without imports since they are in the same target
 class AnalysisViewModel: ObservableObject {
@@ -10,10 +11,14 @@ class AnalysisViewModel: ObservableObject {
     @Published var chartData: [ChartViewModel] = []
     @Published var details: [AnalysisDetail] = []
     @Published var savedAnalyses: [SavedAnalysis] = []
+    @Published var savedMediaAnalyses: [SavedMediaAnalysis] = []
+    @Published var error: String?
+    @Published var shouldNavigateToAnalysis = false
     
     private let analysisStorage = AnalysisStorage()
     private let mediaAnalyzer = MediaAnalyzer()
     private var cancellables = Set<AnyCancellable>()
+    private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "WhatsApp-Counter", category: "AnalysisViewModel")
     
     private let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -25,6 +30,12 @@ class AnalysisViewModel: ObservableObject {
     init() {
         setupNotificationObserver()
         loadSavedAnalyses()
+        
+        // Başlangıçta tüm analizleri temizle ve liste görünümünü göster
+        analysis = nil
+        mediaStats = nil
+        chartData = []
+        details = []
     }
     
     private func setupNotificationObserver() {
@@ -33,7 +44,20 @@ class AnalysisViewModel: ObservableObject {
             .compactMap { $0.object as? AnalysisSummary }
             .receive(on: DispatchQueue.main)
             .sink { [weak self] analysis in
-                self?.updateAnalysis(analysis)
+                guard let self = self else { return }
+                self.updateAnalysis(analysis)
+                
+                // Analizi chatName ile kaydet
+                if let chatName = analysis.chatName,
+                   !self.savedAnalyses.contains(where: { $0.fileName == chatName }) {
+                    do {
+                        try self.analysisStorage.saveAnalysis(analysis, fileName: chatName)
+                        self.loadSavedAnalyses()
+                    } catch {
+                        self.logger.error("Failed to save analysis: \(error.localizedDescription)")
+                        self.error = Constants.Error.storageError
+                    }
+                }
             }
             .store(in: &cancellables)
         
@@ -42,15 +66,132 @@ class AnalysisViewModel: ObservableObject {
             .compactMap { $0.object as? MediaStats }
             .receive(on: DispatchQueue.main)
             .sink { [weak self] stats in
-                self?.mediaStats = stats
+                guard let self = self else { return }
+                // MediaStats'i güncelle
+                self.mediaStats = stats
+                // Kaydedilen analizleri yükle
+                self.loadSavedAnalyses()
             }
             .store(in: &cancellables)
+    }
+    
+    private func loadLatestMediaAnalysis() {
+        mediaStats = analysisStorage.getLatestMediaAnalysis()
     }
     
     private func updateAnalysis(_ summary: AnalysisSummary) {
         self.analysis = summary
         self.generateChartData()
         self.generateDetails()
+    }
+    
+    func saveAnalysis(_ analysis: AnalysisSummary, fileName: String) {
+        do {
+            try analysisStorage.saveAnalysis(analysis, fileName: fileName)
+            loadSavedAnalyses()
+        } catch {
+            logger.error("Failed to save analysis: \(error.localizedDescription)")
+            self.error = Constants.Error.storageError
+        }
+    }
+    
+    func saveMediaAnalysis(_ mediaStats: MediaStats, fileName: String) {
+        do {
+            try analysisStorage.saveMediaAnalysis(mediaStats, fileName: fileName)
+            loadSavedAnalyses()
+        } catch {
+            logger.error("Failed to save media analysis: \(error.localizedDescription)")
+            self.error = Constants.Error.storageError
+        }
+    }
+    
+    func deleteAnalysis(id: UUID) {
+        Task {
+            do {
+                try await MainActor.run {
+                    try analysisStorage.deleteAnalysis(id: id)
+                    loadSavedAnalyses()
+                    
+                    // Eğer silinen analiz şu an görüntülenen analizse, görüntüyü temizle
+                    if let currentAnalysis = analysis,
+                       let savedAnalysis = savedAnalyses.first(where: { $0.id == id }),
+                       savedAnalysis.analysis.timeRange.start == currentAnalysis.timeRange.start {
+                        analysis = nil
+                        chartData = []
+                        details = []
+                        analysisStorage.clearLastSelectedAnalysis()
+                    }
+                }
+            } catch {
+                await MainActor.run {
+                    logger.error("Failed to delete analysis: \(error.localizedDescription)")
+                    self.error = Constants.Error.storageError
+                }
+            }
+        }
+    }
+    
+    func deleteMediaAnalysis(id: UUID) {
+        Task {
+            do {
+                try await MainActor.run {
+                    // Analizi sil
+                    try analysisStorage.deleteMediaAnalysis(id: id)
+                    // Listeyi güncelle
+                    loadSavedAnalyses()
+                    // Görünümü temizle
+                    mediaStats = nil
+                }
+            } catch {
+                await MainActor.run {
+                    logger.error("Failed to delete media analysis: \(error.localizedDescription)")
+                    self.error = Constants.Error.storageError
+                }
+            }
+        }
+    }
+    
+    private func loadSavedAnalyses() {
+        // Normal analizleri yükle
+        if let data = UserDefaults.standard.data(forKey: "saved_analyses"),
+           let analyses = try? JSONDecoder().decode([SavedAnalysis].self, from: data) {
+            self.savedAnalyses = analyses
+        }
+        
+        // Medya analizlerini yükle
+        if let data = UserDefaults.standard.data(forKey: "saved_media_analyses"),
+           let analyses = try? JSONDecoder().decode([SavedMediaAnalysis].self, from: data) {
+            self.savedMediaAnalyses = analyses
+        }
+        
+        // Son seçilen medya analizini yükle
+        if let data = UserDefaults.standard.data(forKey: "last_selected_media_analysis"),
+           let analysis = try? JSONDecoder().decode(SavedMediaAnalysis.self, from: data) {
+            self.mediaStats = analysis.mediaStats
+        }
+    }
+    
+    func selectAnalysis(_ savedAnalysis: SavedAnalysis) {
+        self.analysis = savedAnalysis.analysis
+        self.generateChartData()
+        self.generateDetails()
+        analysisStorage.saveLastSelectedAnalysis(savedAnalysis)
+    }
+    
+    func selectMediaAnalysis(_ savedMediaAnalysis: SavedMediaAnalysis) {
+        // MediaStats'i güncelle
+        self.mediaStats = savedMediaAnalysis.mediaStats
+        
+        // Son seçilen analizi kaydet
+        if let encoded = try? JSONEncoder().encode(savedMediaAnalysis) {
+            UserDefaults.standard.set(encoded, forKey: "last_selected_media_analysis")
+        }
+        
+        // Detay sayfasına yönlendir
+        shouldNavigateToAnalysis = true
+        
+        // Kaydedilen analizleri yükle
+        loadSavedAnalyses()
     }
     
     private func generateChartData() {
@@ -113,18 +254,34 @@ class AnalysisViewModel: ObservableObject {
         // Paylaşım işlemleri buraya gelecek
     }
     
-    private func loadSavedAnalyses() {
-        savedAnalyses = analysisStorage.getSavedAnalyses()
+    private func loadLastSelectedAnalyses() {
+        // Son seçilen sohbet analizini yükle
+        if let lastAnalysis = analysisStorage.getLastSelectedAnalysis() {
+            self.analysis = lastAnalysis.analysis
+            self.generateChartData()
+            self.generateDetails()
+        }
+        
+        // Son seçilen medya analizini yükle
+        if let lastMediaAnalysis = analysisStorage.getLastSelectedMediaAnalysis() {
+            self.mediaStats = lastMediaAnalysis.mediaStats
+        }
     }
     
-    func deleteAnalysis(id: UUID) {
-        analysisStorage.deleteAnalysis(id: id)
-        loadSavedAnalyses()
+    func saveLastSelectedAnalysis(_ savedAnalysis: SavedAnalysis) {
+        analysisStorage.saveLastSelectedAnalysis(savedAnalysis)
     }
     
-    func selectAnalysis(_ savedAnalysis: SavedAnalysis) {
-        self.analysis = savedAnalysis.analysis
-        self.generateChartData()
-        self.generateDetails()
+    func saveLastSelectedMediaAnalysis(_ savedMediaAnalysis: SavedMediaAnalysis) {
+        analysisStorage.saveLastSelectedMediaAnalysis(savedMediaAnalysis)
+    }
+    
+    func clearCurrentAnalysis() {
+        // Görünümü temizle
+        analysis = nil
+        mediaStats = nil
+        chartData = []
+        details = []
+        shouldNavigateToAnalysis = false // Anasayfada kal
     }
 } 

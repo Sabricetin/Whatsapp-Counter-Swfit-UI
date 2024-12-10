@@ -12,6 +12,7 @@ class HomeViewModel: ObservableObject {
     @Published var shouldNavigateToAnalysis = false
     
     private let fileAnalyzer = FileAnalyzer()
+    private let mediaAnalyzer = MediaAnalyzer()
     private let analysisStorage = AnalysisStorage()
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "WhatsApp-Counter", category: "HomeViewModel")
     
@@ -59,18 +60,45 @@ class HomeViewModel: ObservableObject {
         Task {
             do {
                 logger.info("Analyzing file...")
-                let analysis = try await fileAnalyzer.analyzeFile(at: url)
                 
-                await MainActor.run {
-                    logger.info("Analysis completed successfully")
-                    analysisStorage.saveAnalysis(analysis, fileName: url.lastPathComponent)
-                    NotificationCenter.default.post(
-                        name: Constants.Notifications.newAnalysis,
-                        object: analysis
-                    )
-                    isAnalyzing = false
-                    shouldNavigateToAnalysis = true
+                switch type {
+                case .txt, .zip:
+                    let analysis = try await fileAnalyzer.analyzeFile(at: url, allowMedia: false)
+                    await MainActor.run {
+                        logger.info("Analysis completed successfully")
+                        NotificationCenter.default.post(
+                            name: Constants.Notifications.newAnalysis,
+                            object: analysis
+                        )
+                        isAnalyzing = false
+                        shouldNavigateToAnalysis = true
+                    }
+                    
+                case .mediaZip:
+                    let mediaStats = try await mediaAnalyzer.analyzeMediaZip(at: url)
+                    await MainActor.run {
+                        logger.info("Media analysis completed successfully")
+                        do {
+                            let fileName = url.deletingPathExtension().lastPathComponent
+                            
+                            try analysisStorage.saveMediaAnalysis(mediaStats, fileName: fileName)
+                            
+                            NotificationCenter.default.post(
+                                name: Constants.Notifications.newMediaAnalysis,
+                                object: mediaStats
+                            )
+                            
+                            isAnalyzing = false
+                            shouldNavigateToAnalysis = true
+                        } catch {
+                            logger.error("Failed to save media analysis: \(error.localizedDescription)")
+                            errorMessage = Constants.Error.storageError
+                            showError = true
+                            isAnalyzing = false
+                        }
+                    }
                 }
+                
             } catch {
                 await MainActor.run {
                     logger.error("Analysis failed: \(error.localizedDescription)")
@@ -81,8 +109,16 @@ class HomeViewModel: ObservableObject {
                         errorMessage = Constants.Error.unsupportedFile
                     case FileAnalyzerError.parseError:
                         errorMessage = Constants.Error.parseError
+                    case FileAnalyzerError.containsMediaFiles:
+                        errorMessage = Constants.Error.containsMediaFiles
+                    case MediaAnalyzerError.noMediaFound:
+                        errorMessage = Constants.Error.noMediaFound
+                    case MediaAnalyzerError.zipExtractionError:
+                        errorMessage = Constants.Error.zipExtractionError
+                    case AnalysisStorageError.encodingError, AnalysisStorageError.fileSystemError:
+                        errorMessage = Constants.Error.storageError
                     default:
-                        errorMessage = error.localizedDescription
+                        errorMessage = Constants.Error.unknownError
                     }
                     showError = true
                     isAnalyzing = false

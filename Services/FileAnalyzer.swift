@@ -8,6 +8,7 @@ enum FileAnalyzerError: Error {
     case parseError
     case invalidFileFormat
     case zipExtractionError
+    case containsMediaFiles
 }
 
 class FileAnalyzer {
@@ -15,7 +16,22 @@ class FileAnalyzer {
     private let emojiPattern = try! NSRegularExpression(pattern: "[\\p{Emoji_Presentation}\\p{Emoji_Modifier_Base}\\p{Emoji_Modifier}\\p{Emoji_Component}]+", options: [])
     private let wordPattern = try! NSRegularExpression(pattern: "[\\p{L}\\p{N}']+", options: [])
     
-    func analyzeFile(at url: URL) async throws -> AnalysisSummary {
+    private let mediaExtensions = ["jpg", "jpeg", "png", "gif", "mp4", "mov", "mp3", "wav", "webp", "heic"]
+    
+    private func checkForMediaFiles(in directory: URL) throws -> Bool {
+        let fileManager = FileManager.default
+        if let enumerator = fileManager.enumerator(at: directory, includingPropertiesForKeys: nil) {
+            for case let fileURL as URL in enumerator {
+                let fileExtension = fileURL.pathExtension.lowercased()
+                if mediaExtensions.contains(fileExtension) {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+    
+    func analyzeFile(at url: URL, allowMedia: Bool = false) async throws -> AnalysisSummary {
         logger.info("Starting analysis of file: \(url.lastPathComponent)")
         
         let fileExtension = url.pathExtension.lowercased()
@@ -26,8 +42,17 @@ class FileAnalyzer {
         }
         
         let content: String
+        let chatName = url.deletingPathExtension().lastPathComponent
+        
         if fileExtension == "zip" {
-            content = try await extractAndReadZipFile(at: url)
+            let (extractedContent, hasMedia) = try await extractAndCheckZipFile(at: url)
+            
+            if hasMedia && !allowMedia {
+                logger.error("ZIP file contains media files but media is not allowed")
+                throw FileAnalyzerError.containsMediaFiles
+            }
+            
+            content = extractedContent
         } else {
             do {
                 content = try String(contentsOf: url, encoding: .utf8)
@@ -38,10 +63,12 @@ class FileAnalyzer {
             }
         }
         
-        return try await analyzeContent(content)
+        var analysis = try await analyzeContent(content)
+        analysis.chatName = chatName
+        return analysis
     }
     
-    private func extractAndReadZipFile(at url: URL) async throws -> String {
+    private func extractAndCheckZipFile(at url: URL) async throws -> (content: String, hasMedia: Bool) {
         logger.info("Extracting ZIP file")
         
         let fileManager = FileManager.default
@@ -58,7 +85,8 @@ class FileAnalyzer {
             try fileManager.unzipItem(at: url, to: tempDir)
             logger.info("Successfully unzipped file")
             
-            // WhatsApp mesaj dosyasını bul
+            let hasMedia = try checkForMediaFiles(in: tempDir)
+            
             let files = try fileManager.contentsOfDirectory(at: tempDir, includingPropertiesForKeys: nil)
                 .filter { $0.pathExtension.lowercased() == "txt" }
             
@@ -72,7 +100,7 @@ class FileAnalyzer {
             let content = try String(contentsOf: chatFile, encoding: .utf8)
             logger.info("Successfully read chat file content")
             
-            return content
+            return (content, hasMedia)
             
         } catch {
             logger.error("Failed to process ZIP file: \(error.localizedDescription)")

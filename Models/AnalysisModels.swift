@@ -16,6 +16,7 @@ struct AnalysisSummary: Codable {
     let hourlyStats: [HourlyStats]
     let emojiStats: EmojiStats
     let wordStats: WordStats
+    var chatName: String?
 }
 
 struct ParticipantStat: Identifiable, Codable {

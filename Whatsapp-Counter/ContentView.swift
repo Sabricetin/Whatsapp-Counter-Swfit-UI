@@ -7,11 +7,8 @@
 
 import SwiftUI
 
-@main
-struct Whatsapp_CounterApp: App {
-    var body: some Scene {
-        WindowGroup {
-            MainView()
-        }
+struct ContentView: View {
+    var body: some View {
+        MainView()
     }
 }
