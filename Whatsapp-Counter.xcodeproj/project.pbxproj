@@ -1,0 +1,613 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1E2D02572D0642BF003903E7 /* ActivityChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E2D02562D0642BF003903E7 /* ActivityChartView.swift */; };
+		1E2D02592D0643A7003903E7 /* ParticipantsDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E2D02582D0643A7003903E7 /* ParticipantsDetailView.swift */; };
+		1E2D025B2D0643AE003903E7 /* PieChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E2D025A2D0643AE003903E7 /* PieChartView.swift */; };
+		1E2D025E2D06444B003903E7 /* Color+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E2D025C2D06444B003903E7 /* Color+Hex.swift */; };
+		1E2D02622D064EF1003903E7 /* SavedAnalysesList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E2D02612D064EF1003903E7 /* SavedAnalysesList.swift */; };
+		1E2D02642D065E35003903E7 /* WordEmojiAnalysisView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E2D02632D065E35003903E7 /* WordEmojiAnalysisView.swift */; };
+		1E2D02662D06D77C003903E7 /* MediaAnalysisView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E2D02652D06D77C003903E7 /* MediaAnalysisView.swift */; };
+		1E2D02682D06D821003903E7 /* MediaModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E2D02672D06D821003903E7 /* MediaModels.swift */; };
+		1E2D026A2D06D842003903E7 /* MediaAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E2D02692D06D842003903E7 /* MediaAnalyzer.swift */; };
+		1E2D026C2D06DD1E003903E7 /* MediaGalleryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E2D026B2D06DD1E003903E7 /* MediaGalleryView.swift */; };
+		1E3992CD2D0487E10079070A /* WhatsApp_CounterApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E3992CB2D0487E10079070A /* WhatsApp_CounterApp.swift */; };
+		1E3992D12D0487E80079070A /* AnalysisModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E3992CE2D0487E80079070A /* AnalysisModels.swift */; };
+		1E3992D22D0487E80079070A /* ChatAnalysis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E3992CF2D0487E80079070A /* ChatAnalysis.swift */; };
+		1E3992D62D0487ED0079070A /* AnalysisStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E3992D32D0487ED0079070A /* AnalysisStorage.swift */; };
+		1E3992D72D0487ED0079070A /* FileAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E3992D42D0487ED0079070A /* FileAnalyzer.swift */; };
+		1E3992DA2D0487F20079070A /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E3992D82D0487F20079070A /* Constants.swift */; };
+		1E3992E02D0487F60079070A /* AnalysisViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E3992DB2D0487F60079070A /* AnalysisViewModel.swift */; };
+		1E3992E12D0487F60079070A /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E3992DC2D0487F60079070A /* HomeViewModel.swift */; };
+		1E3992E22D0487F60079070A /* MainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E3992DD2D0487F60079070A /* MainViewModel.swift */; };
+		1E3992E32D0487F60079070A /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E3992DE2D0487F60079070A /* SettingsViewModel.swift */; };
+		1E3992F12D0487FD0079070A /* AnalysisOptionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E3992E42D0487FD0079070A /* AnalysisOptionsView.swift */; };
+		1E3992F22D0487FD0079070A /* AnalysisView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E3992E52D0487FD0079070A /* AnalysisView.swift */; };
+		1E3992F32D0487FD0079070A /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E3992E62D0487FD0079070A /* LoadingView.swift */; };
+		1E3992F42D0487FD0079070A /* DocumentPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E3992E82D0487FD0079070A /* DocumentPicker.swift */; };
+		1E3992F62D0487FD0079070A /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E3992EB2D0487FD0079070A /* HomeView.swift */; };
+		1E3992F72D0487FD0079070A /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E3992EC2D0487FD0079070A /* MainView.swift */; };
+		1E3992F82D0487FD0079070A /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E3992EE2D0487FD0079070A /* SettingsView.swift */; };
+		1E3992FB2D0488290079070A /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 1E3992FA2D0488290079070A /* ZIPFoundation */; };
+		1EE386C32D02C80000CAC956 /* whatsapp_CounterApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EE386C22D02C80000CAC956 /* whatsapp_CounterApp.swift */; };
+		1EE386C52D02C80000CAC956 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EE386C42D02C80000CAC956 /* ContentView.swift */; };
+		1EE386C72D02C80100CAC956 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1EE386C62D02C80100CAC956 /* Assets.xcassets */; };
+		1EE386CA2D02C80100CAC956 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1EE386C92D02C80100CAC956 /* Preview Assets.xcassets */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		1E2D02562D0642BF003903E7 /* ActivityChartView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActivityChartView.swift; sourceTree = "<group>"; };
+		1E2D02582D0643A7003903E7 /* ParticipantsDetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParticipantsDetailView.swift; sourceTree = "<group>"; };
+		1E2D025A2D0643AE003903E7 /* PieChartView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PieChartView.swift; sourceTree = "<group>"; };
+		1E2D025C2D06444B003903E7 /* Color+Hex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Color+Hex.swift"; sourceTree = "<group>"; };
+		1E2D02612D064EF1003903E7 /* SavedAnalysesList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SavedAnalysesList.swift; sourceTree = "<group>"; };
+		1E2D02632D065E35003903E7 /* WordEmojiAnalysisView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WordEmojiAnalysisView.swift; sourceTree = "<group>"; };
+		1E2D02652D06D77C003903E7 /* MediaAnalysisView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaAnalysisView.swift; sourceTree = "<group>"; };
+		1E2D02672D06D821003903E7 /* MediaModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaModels.swift; sourceTree = "<group>"; };
+		1E2D02692D06D842003903E7 /* MediaAnalyzer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaAnalyzer.swift; sourceTree = "<group>"; };
+		1E2D026B2D06DD1E003903E7 /* MediaGalleryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaGalleryView.swift; sourceTree = "<group>"; };
+		1E3992CB2D0487E10079070A /* WhatsApp_CounterApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WhatsApp_CounterApp.swift; sourceTree = "<group>"; };
+		1E3992CE2D0487E80079070A /* AnalysisModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalysisModels.swift; sourceTree = "<group>"; };
+		1E3992CF2D0487E80079070A /* ChatAnalysis.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatAnalysis.swift; sourceTree = "<group>"; };
+		1E3992D32D0487ED0079070A /* AnalysisStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalysisStorage.swift; sourceTree = "<group>"; };
+		1E3992D42D0487ED0079070A /* FileAnalyzer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileAnalyzer.swift; sourceTree = "<group>"; };
+		1E3992D82D0487F20079070A /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		1E3992DB2D0487F60079070A /* AnalysisViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalysisViewModel.swift; sourceTree = "<group>"; };
+		1E3992DC2D0487F60079070A /* HomeViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
+		1E3992DD2D0487F60079070A /* MainViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainViewModel.swift; sourceTree = "<group>"; };
+		1E3992DE2D0487F60079070A /* SettingsViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
+		1E3992E42D0487FD0079070A /* AnalysisOptionsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalysisOptionsView.swift; sourceTree = "<group>"; };
+		1E3992E52D0487FD0079070A /* AnalysisView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalysisView.swift; sourceTree = "<group>"; };
+		1E3992E62D0487FD0079070A /* LoadingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
+		1E3992E82D0487FD0079070A /* DocumentPicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DocumentPicker.swift; sourceTree = "<group>"; };
+		1E3992EB2D0487FD0079070A /* HomeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		1E3992EC2D0487FD0079070A /* MainView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
+		1E3992EE2D0487FD0079070A /* SettingsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		1EE386BF2D02C80000CAC956 /* whatsapp-Counter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "whatsapp-Counter.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1EE386C22D02C80000CAC956 /* whatsapp_CounterApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = whatsapp_CounterApp.swift; sourceTree = "<group>"; };
+		1EE386C42D02C80000CAC956 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		1EE386C62D02C80100CAC956 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		1EE386C92D02C80100CAC956 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		1EE386D02D02CABB00CAC956 /* Contents.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Contents.json; sourceTree = "<group>"; };
+		1EE386D22D02CABB00CAC956 /* Contents.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Contents.json; sourceTree = "<group>"; };
+		1EE386D42D02CABB00CAC956 /* Contents.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Contents.json; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		1EE386BC2D02C80000CAC956 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1E3992FB2D0488290079070A /* ZIPFoundation in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		1E2D025D2D06444B003903E7 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				1E2D025C2D06444B003903E7 /* Color+Hex.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		1E3992CC2D0487E10079070A /* App */ = {
+			isa = PBXGroup;
+			children = (
+				1E3992CB2D0487E10079070A /* WhatsApp_CounterApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		1E3992D02D0487E80079070A /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				1E3992CE2D0487E80079070A /* AnalysisModels.swift */,
+				1E3992CF2D0487E80079070A /* ChatAnalysis.swift */,
+				1E2D02672D06D821003903E7 /* MediaModels.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		1E3992D52D0487ED0079070A /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				1E3992D32D0487ED0079070A /* AnalysisStorage.swift */,
+				1E3992D42D0487ED0079070A /* FileAnalyzer.swift */,
+				1E2D02692D06D842003903E7 /* MediaAnalyzer.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		1E3992D92D0487F20079070A /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				1E3992D82D0487F20079070A /* Constants.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		1E3992DF2D0487F60079070A /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				1E3992DB2D0487F60079070A /* AnalysisViewModel.swift */,
+				1E3992DC2D0487F60079070A /* HomeViewModel.swift */,
+				1E3992DD2D0487F60079070A /* MainViewModel.swift */,
+				1E3992DE2D0487F60079070A /* SettingsViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		1E3992E72D0487FD0079070A /* Analysis */ = {
+			isa = PBXGroup;
+			children = (
+				1E2D02562D0642BF003903E7 /* ActivityChartView.swift */,
+				1E3992E42D0487FD0079070A /* AnalysisOptionsView.swift */,
+				1E3992E52D0487FD0079070A /* AnalysisView.swift */,
+				1E3992E62D0487FD0079070A /* LoadingView.swift */,
+				1E2D02652D06D77C003903E7 /* MediaAnalysisView.swift */,
+				1E2D026B2D06DD1E003903E7 /* MediaGalleryView.swift */,
+				1E2D02582D0643A7003903E7 /* ParticipantsDetailView.swift */,
+				1E2D025A2D0643AE003903E7 /* PieChartView.swift */,
+				1E2D02612D064EF1003903E7 /* SavedAnalysesList.swift */,
+				1E2D02632D065E35003903E7 /* WordEmojiAnalysisView.swift */,
+			);
+			path = Analysis;
+			sourceTree = "<group>";
+		};
+		1E3992EA2D0487FD0079070A /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				1E3992E82D0487FD0079070A /* DocumentPicker.swift */,
+			);
+			path = Common;
+			sourceTree = "<group>";
+		};
+		1E3992ED2D0487FD0079070A /* Main */ = {
+			isa = PBXGroup;
+			children = (
+				1E3992EB2D0487FD0079070A /* HomeView.swift */,
+				1E3992EC2D0487FD0079070A /* MainView.swift */,
+			);
+			path = Main;
+			sourceTree = "<group>";
+		};
+		1E3992EF2D0487FD0079070A /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				1E3992EE2D0487FD0079070A /* SettingsView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		1E3992F02D0487FD0079070A /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				1E3992E72D0487FD0079070A /* Analysis */,
+				1E3992EA2D0487FD0079070A /* Common */,
+				1E3992ED2D0487FD0079070A /* Main */,
+				1E3992EF2D0487FD0079070A /* Settings */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		1EE386B62D02C80000CAC956 = {
+			isa = PBXGroup;
+			children = (
+				1E3992CC2D0487E10079070A /* App */,
+				1E2D025D2D06444B003903E7 /* Extensions */,
+				1E3992D02D0487E80079070A /* Models */,
+				1E3992D52D0487ED0079070A /* Services */,
+				1E3992D92D0487F20079070A /* Utils */,
+				1E3992DF2D0487F60079070A /* ViewModels */,
+				1E3992F02D0487FD0079070A /* Views */,
+				1EE386C12D02C80000CAC956 /* whatsapp-Counter */,
+				1EE386C02D02C80000CAC956 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		1EE386C02D02C80000CAC956 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1EE386BF2D02C80000CAC956 /* whatsapp-Counter.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1EE386C12D02C80000CAC956 /* whatsapp-Counter */ = {
+			isa = PBXGroup;
+			children = (
+				1EE386C22D02C80000CAC956 /* whatsapp_CounterApp.swift */,
+				1EE386C42D02C80000CAC956 /* ContentView.swift */,
+				1EE386C62D02C80100CAC956 /* Assets.xcassets */,
+				1EE386C82D02C80100CAC956 /* Preview Content */,
+			);
+			path = "whatsapp-Counter";
+			sourceTree = "<group>";
+		};
+		1EE386C82D02C80100CAC956 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				1EE386D32D02CABB00CAC956 /* AccentColor.colorset */,
+				1EE386D12D02CABB00CAC956 /* AppIcon.appiconset */,
+				1EE386D62D02CABB00CAC956 /* Colors */,
+				1EE386C92D02C80100CAC956 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		1EE386D12D02CABB00CAC956 /* AppIcon.appiconset */ = {
+			isa = PBXGroup;
+			children = (
+				1EE386D02D02CABB00CAC956 /* Contents.json */,
+			);
+			name = AppIcon.appiconset;
+			path = "whatsapp-Counter/Assets.xcassets/AppIcon.appiconset";
+			sourceTree = SOURCE_ROOT;
+		};
+		1EE386D32D02CABB00CAC956 /* AccentColor.colorset */ = {
+			isa = PBXGroup;
+			children = (
+				1EE386D22D02CABB00CAC956 /* Contents.json */,
+			);
+			name = AccentColor.colorset;
+			path = "whatsapp-Counter/Assets.xcassets/AccentColor.colorset";
+			sourceTree = SOURCE_ROOT;
+		};
+		1EE386D52D02CABB00CAC956 /* DarkPrimary.colorset */ = {
+			isa = PBXGroup;
+			children = (
+				1EE386D42D02CABB00CAC956 /* Contents.json */,
+			);
+			path = DarkPrimary.colorset;
+			sourceTree = "<group>";
+		};
+		1EE386D62D02CABB00CAC956 /* Colors */ = {
+			isa = PBXGroup;
+			children = (
+				1EE386D52D02CABB00CAC956 /* DarkPrimary.colorset */,
+			);
+			name = Colors;
+			path = "whatsapp-Counter/Assets.xcassets/Colors";
+			sourceTree = SOURCE_ROOT;
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		1EE386BE2D02C80000CAC956 /* whatsapp-Counter */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1EE386CD2D02C80100CAC956 /* Build configuration list for PBXNativeTarget "whatsapp-Counter" */;
+			buildPhases = (
+				1EE386BB2D02C80000CAC956 /* Sources */,
+				1EE386BC2D02C80000CAC956 /* Frameworks */,
+				1EE386BD2D02C80000CAC956 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "whatsapp-Counter";
+			packageProductDependencies = (
+				1E3992FA2D0488290079070A /* ZIPFoundation */,
+			);
+			productName = "whatsapp-Counter";
+			productReference = 1EE386BF2D02C80000CAC956 /* whatsapp-Counter.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		1EE386B72D02C80000CAC956 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1540;
+				LastUpgradeCheck = 1540;
+				TargetAttributes = {
+					1EE386BE2D02C80000CAC956 = {
+						CreatedOnToolsVersion = 15.4;
+					};
+				};
+			};
+			buildConfigurationList = 1EE386BA2D02C80000CAC956 /* Build configuration list for PBXProject "Whatsapp-Counter" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 1EE386B62D02C80000CAC956;
+			packageReferences = (
+				1E3992F92D0488290079070A /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
+			);
+			productRefGroup = 1EE386C02D02C80000CAC956 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				1EE386BE2D02C80000CAC956 /* whatsapp-Counter */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		1EE386BD2D02C80000CAC956 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1EE386CA2D02C80100CAC956 /* Preview Assets.xcassets in Resources */,
+				1EE386C72D02C80100CAC956 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		1EE386BB2D02C80000CAC956 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1EE386C52D02C80000CAC956 /* ContentView.swift in Sources */,
+				1E2D02592D0643A7003903E7 /* ParticipantsDetailView.swift in Sources */,
+				1E3992D12D0487E80079070A /* AnalysisModels.swift in Sources */,
+				1E2D02642D065E35003903E7 /* WordEmojiAnalysisView.swift in Sources */,
+				1E3992F12D0487FD0079070A /* AnalysisOptionsView.swift in Sources */,
+				1E3992E12D0487F60079070A /* HomeViewModel.swift in Sources */,
+				1E2D025B2D0643AE003903E7 /* PieChartView.swift in Sources */,
+				1E3992F32D0487FD0079070A /* LoadingView.swift in Sources */,
+				1E3992D22D0487E80079070A /* ChatAnalysis.swift in Sources */,
+				1E3992CD2D0487E10079070A /* WhatsApp_CounterApp.swift in Sources */,
+				1E3992E22D0487F60079070A /* MainViewModel.swift in Sources */,
+				1E2D02662D06D77C003903E7 /* MediaAnalysisView.swift in Sources */,
+				1E3992F42D0487FD0079070A /* DocumentPicker.swift in Sources */,
+				1E3992F72D0487FD0079070A /* MainView.swift in Sources */,
+				1E2D02572D0642BF003903E7 /* ActivityChartView.swift in Sources */,
+				1E3992E02D0487F60079070A /* AnalysisViewModel.swift in Sources */,
+				1E3992F22D0487FD0079070A /* AnalysisView.swift in Sources */,
+				1E2D026C2D06DD1E003903E7 /* MediaGalleryView.swift in Sources */,
+				1E3992D62D0487ED0079070A /* AnalysisStorage.swift in Sources */,
+				1E2D02622D064EF1003903E7 /* SavedAnalysesList.swift in Sources */,
+				1E2D025E2D06444B003903E7 /* Color+Hex.swift in Sources */,
+				1E3992DA2D0487F20079070A /* Constants.swift in Sources */,
+				1E3992D72D0487ED0079070A /* FileAnalyzer.swift in Sources */,
+				1E3992F62D0487FD0079070A /* HomeView.swift in Sources */,
+				1E2D02682D06D821003903E7 /* MediaModels.swift in Sources */,
+				1E2D026A2D06D842003903E7 /* MediaAnalyzer.swift in Sources */,
+				1EE386C32D02C80000CAC956 /* whatsapp_CounterApp.swift in Sources */,
+				1E3992E32D0487F60079070A /* SettingsViewModel.swift in Sources */,
+				1E3992F82D0487FD0079070A /* SettingsView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		1EE386CB2D02C80100CAC956 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		1EE386CC2D02C80100CAC956 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		1EE386CE2D02C80100CAC956 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"whatsapp-Counter/Preview Content\"";
+				DEVELOPMENT_TEAM = MAD925RDGT;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.sabri.whatsappCounter;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		1EE386CF2D02C80100CAC956 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"whatsapp-Counter/Preview Content\"";
+				DEVELOPMENT_TEAM = MAD925RDGT;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.sabri.whatsappCounter;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1EE386BA2D02C80000CAC956 /* Build configuration list for PBXProject "Whatsapp-Counter" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1EE386CB2D02C80100CAC956 /* Debug */,
+				1EE386CC2D02C80100CAC956 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1EE386CD2D02C80100CAC956 /* Build configuration list for PBXNativeTarget "whatsapp-Counter" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1EE386CE2D02C80100CAC956 /* Debug */,
+				1EE386CF2D02C80100CAC956 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		1E3992F92D0488290079070A /* XCRemoteSwiftPackageReference "ZIPFoundation" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/weichsel/ZIPFoundation";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.9.19;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		1E3992FA2D0488290079070A /* ZIPFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1E3992F92D0488290079070A /* XCRemoteSwiftPackageReference "ZIPFoundation" */;
+			productName = ZIPFoundation;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 1EE386B72D02C80000CAC956 /* Project object */;
+}
