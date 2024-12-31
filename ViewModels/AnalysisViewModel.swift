@@ -47,17 +47,11 @@ class AnalysisViewModel: ObservableObject {
                 guard let self = self else { return }
                 self.updateAnalysis(analysis)
                 
-                // Analizi chatName ile kaydet
-                if let chatName = analysis.chatName,
-                   !self.savedAnalyses.contains(where: { $0.fileName == chatName }) {
-                    do {
-                        try self.analysisStorage.saveAnalysis(analysis, fileName: chatName)
-                        self.loadSavedAnalyses()
-                    } catch {
-                        self.logger.error("Failed to save analysis: \(error.localizedDescription)")
-                        self.error = Constants.Error.storageError
-                    }
-                }
+                // Kaydedilen analizleri hemen yükle
+                self.loadSavedAnalyses()
+                
+                // Detay sayfasına yönlendir
+                self.shouldNavigateToAnalysis = true
             }
             .store(in: &cancellables)
         
@@ -69,8 +63,12 @@ class AnalysisViewModel: ObservableObject {
                 guard let self = self else { return }
                 // MediaStats'i güncelle
                 self.mediaStats = stats
-                // Kaydedilen analizleri yükle
+                
+                // Kaydedilen analizleri hemen yükle
                 self.loadSavedAnalyses()
+                
+                // Detay sayfasına yönlendir
+                self.shouldNavigateToAnalysis = true
             }
             .store(in: &cancellables)
     }
@@ -88,7 +86,7 @@ class AnalysisViewModel: ObservableObject {
     func saveAnalysis(_ analysis: AnalysisSummary, fileName: String) {
         do {
             try analysisStorage.saveAnalysis(analysis, fileName: fileName)
-            loadSavedAnalyses()
+            loadSavedAnalyses() // Kaydedilen analizleri hemen yükle
         } catch {
             logger.error("Failed to save analysis: \(error.localizedDescription)")
             self.error = Constants.Error.storageError
@@ -162,12 +160,6 @@ class AnalysisViewModel: ObservableObject {
         if let data = UserDefaults.standard.data(forKey: "saved_media_analyses"),
            let analyses = try? JSONDecoder().decode([SavedMediaAnalysis].self, from: data) {
             self.savedMediaAnalyses = analyses
-        }
-        
-        // Son seçilen medya analizini yükle
-        if let data = UserDefaults.standard.data(forKey: "last_selected_media_analysis"),
-           let analysis = try? JSONDecoder().decode(SavedMediaAnalysis.self, from: data) {
-            self.mediaStats = analysis.mediaStats
         }
     }
     

@@ -2,13 +2,36 @@ import Foundation
 import OSLog
 import ZIPFoundation
 
-enum FileAnalyzerError: Error {
+enum FileAnalyzerError: LocalizedError {
     case fileReadError
     case unsupportedFileType
-    case parseError
     case invalidFileFormat
-    case zipExtractionError
     case containsMediaFiles
+    case zipExtractionError
+    case noMediaFound
+    case unknownError
+    case parseError
+    
+    var errorDescription: String? {
+        switch self {
+        case .fileReadError:
+            return Constants.Error.fileReadError
+        case .unsupportedFileType:
+            return Constants.Error.unsupportedFile
+        case .invalidFileFormat:
+            return Constants.Error.invalidFormat
+        case .containsMediaFiles:
+            return Constants.Error.containsMediaFiles
+        case .zipExtractionError:
+            return Constants.Error.zipExtractionError
+        case .noMediaFound:
+            return Constants.Error.noMediaFound
+        case .unknownError:
+            return Constants.Error.unknownError
+        case .parseError:
+            return Constants.Error.parseError
+        }
+    }
 }
 
 class FileAnalyzer {
@@ -44,71 +67,93 @@ class FileAnalyzer {
         let content: String
         let chatName = url.deletingPathExtension().lastPathComponent
         
-        if fileExtension == "zip" {
-            let (extractedContent, hasMedia) = try await extractAndCheckZipFile(at: url)
-            
-            if hasMedia && !allowMedia {
-                logger.error("ZIP file contains media files but media is not allowed")
-                throw FileAnalyzerError.containsMediaFiles
+        do {
+            if fileExtension == "zip" {
+                let (extractedContent, hasMedia) = try await extractAndCheckZipFile(at: url)
+                
+                if hasMedia && !allowMedia {
+                    logger.error("ZIP file contains media files but media is not allowed")
+                    throw FileAnalyzerError.containsMediaFiles
+                }
+                
+                content = extractedContent
+            } else {
+                do {
+                    content = try String(contentsOf: url, encoding: .utf8)
+                } catch {
+                    logger.error("Failed to read file: \(error.localizedDescription)")
+                    throw FileAnalyzerError.fileReadError
+                }
             }
             
-            content = extractedContent
-        } else {
-            do {
-                content = try String(contentsOf: url, encoding: .utf8)
-                logger.info("Successfully read text file content")
-            } catch {
-                logger.error("Failed to read text file: \(error.localizedDescription)")
-                throw FileAnalyzerError.fileReadError
-            }
+            let analysis = try await parseContent(content, fileName: chatName)
+            logger.info("Analysis completed successfully")
+            return analysis
+            
+        } catch let error as FileAnalyzerError {
+            logger.error("FileAnalyzer error: \(error)")
+            throw error
+        } catch {
+            logger.error("Unexpected error during analysis: \(error.localizedDescription)")
+            throw FileAnalyzerError.unknownError
         }
-        
-        var analysis = try await analyzeContent(content)
-        analysis.chatName = chatName
-        return analysis
     }
     
     private func extractAndCheckZipFile(at url: URL) async throws -> (content: String, hasMedia: Bool) {
         logger.info("Extracting ZIP file")
         
         let fileManager = FileManager.default
-        let tempDir = fileManager.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let tempBaseURL = fileManager.temporaryDirectory
+        let extractionDir = tempBaseURL.appendingPathComponent(UUID().uuidString)
         
         do {
-            try fileManager.createDirectory(at: tempDir, withIntermediateDirectories: true, attributes: nil)
+            // Dizin oluştur
+            try fileManager.createDirectory(at: extractionDir, withIntermediateDirectories: true, attributes: nil)
+            logger.info("Created extraction directory: \(extractionDir.lastPathComponent)")
+            
             defer {
-                try? fileManager.removeItem(at: tempDir)
+                // Temizlik
+                try? fileManager.removeItem(at: extractionDir)
             }
             
-            logger.info("Created temporary directory: \(tempDir.lastPathComponent)")
-            
-            try fileManager.unzipItem(at: url, to: tempDir)
+            // ZIP dosyasını aç
+            try fileManager.unzipItem(at: url, to: extractionDir)
             logger.info("Successfully unzipped file")
             
-            let hasMedia = try checkForMediaFiles(in: tempDir)
-            
-            let files = try fileManager.contentsOfDirectory(at: tempDir, includingPropertiesForKeys: nil)
+            // TXT dosyasını bul
+            let txtFiles = try fileManager.contentsOfDirectory(at: extractionDir, includingPropertiesForKeys: nil)
                 .filter { $0.pathExtension.lowercased() == "txt" }
             
-            guard let chatFile = files.first else {
+            guard let chatFile = txtFiles.first else {
                 logger.error("No text file found in ZIP archive")
                 throw FileAnalyzerError.invalidFileFormat
             }
             
-            logger.info("Found chat file: \(chatFile.lastPathComponent)")
+            // Medya dosyası kontrolü
+            let hasMedia = try checkForMediaFiles(in: extractionDir)
             
-            let content = try String(contentsOf: chatFile, encoding: .utf8)
-            logger.info("Successfully read chat file content")
+            // Dosya içeriğini oku
+            let content: String
+            do {
+                content = try String(contentsOf: chatFile, encoding: .utf8)
+                logger.info("Successfully read chat file content")
+            } catch {
+                logger.error("Failed to read chat file: \(error.localizedDescription)")
+                throw FileAnalyzerError.fileReadError
+            }
             
             return (content, hasMedia)
             
+        } catch let error as FileAnalyzerError {
+            logger.error("FileAnalyzer error during ZIP extraction: \(error)")
+            throw error
         } catch {
             logger.error("Failed to process ZIP file: \(error.localizedDescription)")
             throw FileAnalyzerError.zipExtractionError
         }
     }
     
-    private func analyzeContent(_ content: String) async throws -> AnalysisSummary {
+    private func parseContent(_ content: String, fileName: String) async throws -> AnalysisSummary {
         let lines = content.components(separatedBy: .newlines)
             .filter { !$0.isEmpty }
         
@@ -207,8 +252,6 @@ class FileAnalyzer {
             }
         }
         let totalWords = allWords.values.reduce(0, +)
-        
-        logger.info("Analysis completed successfully")
         
         return AnalysisSummary(
             totalMessages: participants.values.map { $0.count }.reduce(0, +),
@@ -337,6 +380,46 @@ class FileAnalyzer {
                 hour: hour,
                 messageCount: hourlyMessages[hour] ?? 0
             )
+        }
+    }
+    
+    func analyzeMediaZip(at url: URL) async throws -> MediaStats {
+        logger.info("Starting media analysis of ZIP file: \(url.lastPathComponent)")
+        
+        let fileManager = FileManager.default
+        let tempBaseURL = fileManager.temporaryDirectory
+        let extractionDir = tempBaseURL.appendingPathComponent(UUID().uuidString)
+        
+        do {
+            // Dizin oluştur
+            try fileManager.createDirectory(at: extractionDir, withIntermediateDirectories: true, attributes: nil)
+            logger.info("Created extraction directory: \(extractionDir.lastPathComponent)")
+            
+            defer {
+                // Temizlik
+                try? fileManager.removeItem(at: extractionDir)
+            }
+            
+            // ZIP dosyasını aç
+            try fileManager.unzipItem(at: url, to: extractionDir)
+            logger.info("Successfully unzipped file")
+            
+            // Medya dosyalarını analiz et
+            let mediaAnalyzer = MediaAnalyzer()
+            let mediaStats = try await mediaAnalyzer.analyzeDirectory(at: extractionDir)
+            
+            if mediaStats.mediaFiles.isEmpty {
+                logger.error("No media files found in ZIP archive")
+                throw FileAnalyzerError.noMediaFound
+            }
+            
+            return mediaStats
+        } catch let error as FileAnalyzerError {
+            logger.error("FileAnalyzer error during media analysis: \(error)")
+            throw error
+        } catch {
+            logger.error("Unexpected error during media analysis: \(error.localizedDescription)")
+            throw FileAnalyzerError.zipExtractionError
         }
     }
 } 

@@ -11,6 +11,9 @@ class HomeViewModel: ObservableObject {
     @Published var errorMessage = ""
     @Published var shouldNavigateToAnalysis = false
     
+    @Published var savedAnalyses: [SavedAnalysis] = []
+    @Published var savedMediaAnalyses: [SavedMediaAnalysis] = []
+    
     private let fileAnalyzer = FileAnalyzer()
     private let mediaAnalyzer = MediaAnalyzer()
     private let analysisStorage = AnalysisStorage()
@@ -62,39 +65,45 @@ class HomeViewModel: ObservableObject {
             do {
                 logger.info("Analyzing file...")
                 
+                defer {
+                    if FileManager.default.fileExists(atPath: url.path) {
+                        try? FileManager.default.removeItem(at: url)
+                    }
+                }
+                
                 switch type {
-                case .txt, .zip:
+                case .txt:
                     let analysis = try await fileAnalyzer.analyzeFile(at: url, allowMedia: false)
-                    await MainActor.run {
-                        logger.info("Analysis completed successfully")
-                        NotificationCenter.default.post(
-                            name: Constants.Notifications.newAnalysis,
-                            object: analysis
-                        )
-                        isAnalyzing = false
-                        shouldNavigateToAnalysis = true
-                    }
+                    try await analysisStorage.saveAnalysis(analysis, fileName: url.lastPathComponent)
+                    NotificationCenter.default.post(name: Constants.Notifications.newAnalysis, object: analysis)
+                    
+                case .zip:
+                    let analysis = try await fileAnalyzer.analyzeFile(at: url, allowMedia: true)
+                    try await analysisStorage.saveAnalysis(analysis, fileName: url.lastPathComponent)
+                    NotificationCenter.default.post(name: Constants.Notifications.newAnalysis, object: analysis)
+                    
                 case .mediaZip:
-                    let mediaStats = try await mediaAnalyzer.analyzeMediaZip(at: url)
-                    await MainActor.run {
-                        logger.info("Media analysis completed successfully")
-                        NotificationCenter.default.post(
-                            name: Constants.Notifications.newMediaAnalysis,
-                            object: mediaStats
-                        )
-                    }
-                    
-                    try await Task.sleep(nanoseconds: 100_000_000) // 0.1 saniye
-                    
-                    await MainActor.run {
-                        isAnalyzing = false
-                        shouldNavigateToAnalysis = true
-                    }
+                    let mediaStats = try await fileAnalyzer.analyzeMediaZip(at: url)
+                    try await analysisStorage.saveMediaAnalysis(mediaStats, fileName: url.lastPathComponent)
+                    NotificationCenter.default.post(name: Constants.Notifications.newMediaAnalysis, object: mediaStats)
+                }
+                
+                await MainActor.run {
+                    isAnalyzing = false
+                    shouldNavigateToAnalysis = true
+                }
+                
+            } catch let error as FileAnalyzerError {
+                await MainActor.run {
+                    logger.error("Analysis failed with FileAnalyzerError: \(error)")
+                    errorMessage = error.localizedDescription
+                    showError = true
+                    isAnalyzing = false
                 }
             } catch {
                 await MainActor.run {
-                    logger.error("Analysis failed: \(error.localizedDescription)")
-                    errorMessage = error.localizedDescription
+                    logger.error("Analysis failed with unexpected error: \(error.localizedDescription)")
+                    errorMessage = Constants.Error.unknownError
                     showError = true
                     isAnalyzing = false
                 }

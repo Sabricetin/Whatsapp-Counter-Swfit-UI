@@ -21,6 +21,9 @@ class AnalysisStorage {
         return paths[0].appendingPathComponent("MediaAnalysis", isDirectory: true)
     }
     
+    private var savedAnalyses: [SavedAnalysis] = []
+    private var savedMediaAnalyses: [SavedMediaAnalysis] = []
+    
     init() {
         createMediaDirectory()
     }
@@ -52,12 +55,7 @@ class AnalysisStorage {
             for url in contents {
                 let dirname = url.lastPathComponent
                 if !validDirectories.contains(dirname) {
-                    do {
-                        try fileManager.removeItem(at: url)
-                        logger.info("Removed orphaned directory: \(dirname)")
-                    } catch {
-                        logger.error("Failed to remove orphaned directory: \(error.localizedDescription)")
-                    }
+                    try? fileManager.removeItem(at: url)
                 }
             }
         } catch {
@@ -65,119 +63,27 @@ class AnalysisStorage {
         }
     }
     
-    func validateMediaFiles(_ analysis: SavedMediaAnalysis) -> SavedMediaAnalysis {
-        let fileManager = FileManager.default
-        var updatedStats = analysis.mediaStats
-        var hasChanges = false
-        
-        let originalCount = updatedStats.mediaFiles.count
-        updatedStats.mediaFiles = updatedStats.mediaFiles.filter { file in
-            let exists = fileManager.fileExists(atPath: file.url.path)
-            if !exists {
-                logger.warning("Media file not found: \(file.url.path)")
-                hasChanges = true
-            }
-            return exists
-        }
-        
-        if hasChanges {
-            logger.info("Removed \(originalCount - updatedStats.mediaFiles.count) invalid media files")
-            
-            updatedStats.totalImages = updatedStats.mediaFiles.filter { $0.type == .image }.count
-            updatedStats.totalGifs = updatedStats.mediaFiles.filter { $0.type == .gif }.count
-            updatedStats.totalVideos = updatedStats.mediaFiles.filter { $0.type == .video }.count
-            updatedStats.totalSize = updatedStats.mediaFiles.reduce(0) { $0 + $1.size }
-            
-            var mediaByParticipant: [String: ParticipantMediaStats] = [:]
-            let participantFiles = Dictionary(grouping: updatedStats.mediaFiles) { $0.participant }
-            
-            for (participant, files) in participantFiles {
-                let participantImages = files.filter { $0.type == .image }.count
-                let participantGifs = files.filter { $0.type == .gif }.count
-                let participantVideos = files.filter { $0.type == .video }.count
-                let participantSize = files.reduce(0) { $0 + $1.size }
-                
-                let fileTypes = Dictionary(grouping: files) { $0.fileExtension }
-                    .mapValues { $0.count }
-                
-                mediaByParticipant[participant] = ParticipantMediaStats(
-                    imageCount: participantImages,
-                    gifCount: participantGifs,
-                    videoCount: participantVideos,
-                    totalSize: participantSize,
-                    averageMediaPerDay: Double(files.count),
-                    mostActiveMediaDays: [],
-                    fileTypes: fileTypes
-                )
-            }
-            
-            updatedStats.mediaByParticipant = mediaByParticipant
-            
-            let calendar = Calendar.current
-            var dailyStats: [DailyMediaStats] = []
-            var monthlyStats: [MonthlyMediaStats] = []
-            
-            let groupedByDay = Dictionary(grouping: updatedStats.mediaFiles) { file in
-                calendar.startOfDay(for: file.creationDate ?? Date())
-            }
-            
-            for (date, files) in groupedByDay {
-                let dayStats = DailyMediaStats(
-                    date: date,
-                    imageCount: files.filter { $0.type == .image }.count,
-                    gifCount: files.filter { $0.type == .gif }.count,
-                    videoCount: files.filter { $0.type == .video }.count,
-                    totalSize: files.reduce(0) { $0 + $1.size }
-                )
-                dailyStats.append(dayStats)
-            }
-            
-            let groupedByMonth = Dictionary(grouping: updatedStats.mediaFiles) { file in
-                let date = file.creationDate ?? Date()
-                return calendar.date(from: calendar.dateComponents([.year, .month], from: date)) ?? date
-            }
-            
-            for (month, files) in groupedByMonth {
-                let daysInMonth = calendar.range(of: .day, in: .month, for: month)?.count ?? 30
-                let monthStats = MonthlyMediaStats(
-                    month: month,
-                    imageCount: files.filter { $0.type == .image }.count,
-                    gifCount: files.filter { $0.type == .gif }.count,
-                    videoCount: files.filter { $0.type == .video }.count,
-                    totalSize: files.reduce(0) { $0 + $1.size },
-                    averagePerDay: Double(files.count) / Double(daysInMonth)
-                )
-                monthlyStats.append(monthStats)
-            }
-            
-            updatedStats.dailyMediaStats = dailyStats.sorted { $0.date < $1.date }
-            updatedStats.monthlyMediaStats = monthlyStats.sorted { $0.month < $1.month }
-            
-            updatedStats.fileTypes = Dictionary(grouping: updatedStats.mediaFiles) { $0.fileExtension }
-                .mapValues { $0.count }
-        }
-        
-        return SavedMediaAnalysis(
-            id: analysis.id,
-            fileName: analysis.fileName,
-            date: analysis.date,
-            mediaStats: updatedStats
-        )
-    }
-    
     func saveAnalysis(_ analysis: AnalysisSummary, fileName: String) throws {
         var savedAnalyses = getSavedAnalyses()
-        let newAnalysis = SavedAnalysis(
+        
+        let savedAnalysis = SavedAnalysis(
             id: UUID(),
             fileName: fileName,
             date: Date(),
             analysis: analysis
         )
-        savedAnalyses.append(newAnalysis)
+        
+        if let index = savedAnalyses.firstIndex(where: { $0.fileName == fileName }) {
+            savedAnalyses[index] = savedAnalysis
+        } else {
+            savedAnalyses.insert(savedAnalysis, at: 0)
+        }
         
         do {
             let encoded = try JSONEncoder().encode(savedAnalyses)
             defaults.set(encoded, forKey: storageKey)
+            defaults.synchronize()
+            saveLastSelectedAnalysis(savedAnalysis)
         } catch {
             logger.error("Failed to save analysis: \(error.localizedDescription)")
             throw AnalysisStorageError.encodingError
@@ -187,22 +93,32 @@ class AnalysisStorage {
     func saveMediaAnalysis(_ mediaStats: MediaStats, fileName: String) throws {
         var savedMediaAnalyses = getSavedMediaAnalyses()
         
-        let newAnalysis = SavedMediaAnalysis(
+        // Yeni medya analizi için benzersiz ID oluştur
+        let savedMediaAnalysis = SavedMediaAnalysis(
             id: UUID(),
             fileName: fileName,
             date: Date(),
             mediaStats: mediaStats
         )
         
+        // Aynı dosya adına sahip analiz varsa güncelle, yoksa yeni ekle
         if let index = savedMediaAnalyses.firstIndex(where: { $0.fileName == fileName }) {
-            savedMediaAnalyses[index] = newAnalysis
+            savedMediaAnalyses[index] = savedMediaAnalysis
         } else {
-            savedMediaAnalyses.append(newAnalysis)
+            savedMediaAnalyses.insert(savedMediaAnalysis, at: 0)
         }
         
-        let encoded = try JSONEncoder().encode(savedMediaAnalyses)
-        defaults.set(encoded, forKey: mediaStorageKey)
-        defaults.synchronize()
+        do {
+            let encoded = try JSONEncoder().encode(savedMediaAnalyses)
+            defaults.set(encoded, forKey: mediaStorageKey)
+            defaults.synchronize()
+            
+            // Son seçilen medya analizini güncelle
+            saveLastSelectedMediaAnalysis(savedMediaAnalysis)
+        } catch {
+            logger.error("Failed to save media analysis: \(error.localizedDescription)")
+            throw AnalysisStorageError.encodingError
+        }
     }
     
     func getSavedAnalyses() -> [SavedAnalysis] {
@@ -318,5 +234,15 @@ class AnalysisStorage {
     
     func clearLastSelectedMediaAnalysis() {
         defaults.removeObject(forKey: lastMediaAnalysisKey)
+    }
+    
+    func loadSavedAnalyses() throws {
+        let data = defaults.data(forKey: storageKey) ?? Data()
+        savedAnalyses = try JSONDecoder().decode([SavedAnalysis].self, from: data)
+    }
+    
+    func loadSavedMediaAnalyses() throws {
+        let data = defaults.data(forKey: mediaStorageKey) ?? Data()
+        savedMediaAnalyses = try JSONDecoder().decode([SavedMediaAnalysis].self, from: data)
     }
 } 

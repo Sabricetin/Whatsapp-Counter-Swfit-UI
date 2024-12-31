@@ -7,6 +7,13 @@ struct SavedAnalysis: Codable, Identifiable {
     let analysis: AnalysisSummary
 }
 
+struct SavedMediaAnalysis: Codable, Identifiable {
+    let id: UUID
+    let fileName: String
+    let date: Date
+    let mediaStats: MediaStats
+}
+
 struct AnalysisSummary: Codable {
     let totalMessages: Int
     let totalWords: Int

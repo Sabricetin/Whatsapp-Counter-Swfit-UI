@@ -1,94 +1,50 @@
-
-
 import SwiftUI
 import UniformTypeIdentifiers
 
 struct DocumentPicker: UIViewControllerRepresentable {
-    @Environment(\.dismiss) private var dismiss
     let types: [UTType]
     let onSelection: (URL) -> Void
-
+    
     func makeUIViewController(context: Context) -> UIDocumentPickerViewController {
-        let picker = UIDocumentPickerViewController(forOpeningContentTypes: types)
+        let picker = UIDocumentPickerViewController(forOpeningContentTypes: types, asCopy: true)
         picker.delegate = context.coordinator
         picker.allowsMultipleSelection = false
+        picker.shouldShowFileExtensions = true
         return picker
     }
-
+    
     func updateUIViewController(_ uiViewController: UIDocumentPickerViewController, context: Context) {}
-
+    
     func makeCoordinator() -> Coordinator {
-        Coordinator(parent: self)
+        Coordinator(onSelection: onSelection)
     }
-
+    
     class Coordinator: NSObject, UIDocumentPickerDelegate {
-        let parent: DocumentPicker
-        private var isDismissed = false
-
-        init(parent: DocumentPicker) {
-            self.parent = parent
+        let onSelection: (URL) -> Void
+        
+        init(onSelection: @escaping (URL) -> Void) {
+            self.onSelection = onSelection
         }
-
+        
         func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
             guard let url = urls.first else { return }
-            parent.onSelection(url)
-            DispatchQueue.main.async {
-                if !self.isDismissed {
-                    self.isDismissed = true
-                    self.parent.dismiss()
+            
+            // Güvenli erişim için URL'yi kopyala
+            let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent(url.lastPathComponent)
+            
+            do {
+                // Eğer varsa eski dosyayı sil
+                if FileManager.default.fileExists(atPath: tempURL.path) {
+                    try FileManager.default.removeItem(at: tempURL)
                 }
-            }
-        }
-
-        func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
-            DispatchQueue.main.async {
-                if !self.isDismissed {
-                    self.isDismissed = true
-                    self.parent.dismiss()
-                }
+                
+                // Yeni dosyayı kopyala
+                try FileManager.default.copyItem(at: url, to: tempURL)
+                
+                onSelection(tempURL)
+            } catch {
+                print("Error copying file: \(error)")
             }
         }
     }
 }
-
-/*
-import SwiftUI
-import UniformTypeIdentifiers
-
-struct DocumentPicker: UIViewControllerRepresentable {
-    @Environment(\.dismiss) private var dismiss
-    let types: [UTType]
-    let onSelection: (URL) -> Void
-    
-    func makeUIViewController(context: Context) -> UIDocumentPickerViewController {
-        let picker = UIDocumentPickerViewController(forOpeningContentTypes: types)
-        picker.delegate = context.coordinator
-        picker.allowsMultipleSelection = false
-        return picker
-    }
-    
-    func updateUIViewController(_ uiViewController: UIDocumentPickerViewController, context: Context) {}
-    
-    func makeCoordinator() -> Coordinator {
-        Coordinator(parent: self)
-    }
-    
-    class Coordinator: NSObject, UIDocumentPickerDelegate {
-        let parent: DocumentPicker
-        
-        init(parent: DocumentPicker) {
-            self.parent = parent
-        }
-        
-        func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
-            guard let url = urls.first else { return }
-            parent.onSelection(url)
-            parent.dismiss()
-        }
-        
-        func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
-            parent.dismiss()
-        }
-    }
-} 
-*/
