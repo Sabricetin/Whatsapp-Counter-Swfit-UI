@@ -206,9 +206,10 @@ class AnalysisViewModel: ObservableObject {
         // En aktif saati bul
         let mostActiveHour = analysis.hourlyStats.max { $0.messageCount < $1.messageCount }
         
-        // Aktif gün sayısını hesapla
+        // Tarih aralığı hesaplama
+        let dateRange = analysis.timeRange.getDateRange()
         let calendar = Calendar.current
-        let daysBetween = calendar.dateComponents([.day], from: analysis.timeRange.start, to: analysis.timeRange.end).day ?? 0
+        let daysBetween = calendar.dateComponents([.day], from: dateRange.start, to: dateRange.end).day ?? 0
         let activeDays = max(1, daysBetween + 1)
         
         // Ortalama mesaj/gün hesapla

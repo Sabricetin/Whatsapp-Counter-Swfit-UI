@@ -1,5 +1,55 @@
 import Foundation
 
+// DateRange enum'ını burada tanımlayalım
+public enum DateRange: String, Codable, CaseIterable {
+    case week = "1 Hafta"
+    case month = "1 Ay"
+    case threeMonths = "3 Ay"
+    case sixMonths = "6 Ay"
+    case all = "Tümü"
+    
+    var days: Int? {
+        switch self {
+        case .week: return 7
+        case .month: return 30
+        case .threeMonths: return 90
+        case .sixMonths: return 180
+        case .all: return nil
+        }
+    }
+    
+    // Tarih aralığı hesaplama
+    func getDateRange(from referenceDate: Date = Date()) -> (start: Date, end: Date) {
+        let calendar = Calendar.current
+        let end = calendar.startOfDay(for: referenceDate)
+        
+        let start: Date
+        switch self {
+        case .week:
+            start = calendar.date(byAdding: .day, value: -7, to: end) ?? end
+        case .month:
+            start = calendar.date(byAdding: .day, value: -30, to: end) ?? end
+        case .threeMonths:
+            start = calendar.date(byAdding: .day, value: -90, to: end) ?? end
+        case .sixMonths:
+            start = calendar.date(byAdding: .day, value: -180, to: end) ?? end
+        case .all:
+            start = calendar.date(byAdding: .year, value: -1, to: end) ?? end
+        }
+        
+        return (start, end)
+    }
+    
+    // Başlangıç ve bitiş tarihleri için hesaplanmış özellikler
+    var start: Date {
+        getDateRange().start
+    }
+    
+    var end: Date {
+        getDateRange().end
+    }
+}
+
 struct SavedAnalysis: Codable, Identifiable {
     let id: UUID
     let fileName: String
@@ -15,9 +65,14 @@ struct SavedMediaAnalysis: Codable, Identifiable {
 }
 
 struct AnalysisSummary: Codable {
-    let totalMessages: Int
-    let totalWords: Int
+    let id: UUID
+    let fileName: String
     let timeRange: DateRange
+    let totalMessages: Int
+    let participantCount: Int
+    let hasMedia: Bool
+    let createdAt: Date
+    let totalWords: Int
     let participantStats: [ParticipantStat]
     let dailyStats: [DailyStats]
     let hourlyStats: [HourlyStats]
@@ -47,11 +102,6 @@ struct HourlyStats: Identifiable, Codable {
     let id: UUID
     let hour: Int
     let messageCount: Int
-}
-
-struct DateRange: Codable {
-    let start: Date
-    let end: Date
 }
 
 struct EmojiStats: Codable {

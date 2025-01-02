@@ -253,10 +253,15 @@ class FileAnalyzer {
         }
         let totalWords = allWords.values.reduce(0, +)
         
-        return AnalysisSummary(
+        let analysis = AnalysisSummary(
+            id: UUID(),
+            fileName: fileName,
+            timeRange: .all,
             totalMessages: participants.values.map { $0.count }.reduce(0, +),
+            participantCount: participants.count,
+            hasMedia: false,
+            createdAt: Date(),
             totalWords: totalWords,
-            timeRange: DateRange(start: startDate ?? Date(), end: endDate ?? Date()),
             participantStats: participantStats,
             dailyStats: createDailyStats(from: dailyMessages),
             hourlyStats: createHourlyStats(from: hourlyMessages),
@@ -270,8 +275,11 @@ class FileAnalyzer {
                 uniqueCount: allWords.count,
                 topWords: getTopWords(from: allWords, total: totalWords),
                 wordsByParticipant: wordCounts.mapValues { getTopWords(from: $0, total: $0.values.reduce(0, +)) }
-            )
+            ),
+            chatName: fileName
         )
+        
+        return analysis
     }
     
     private func parseLine(_ line: String) -> (Date, String, String)? {
