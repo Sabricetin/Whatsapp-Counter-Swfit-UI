@@ -5,7 +5,7 @@ public enum DateRange: String, Codable, CaseIterable {
     case week = "1 Hafta"
     case month = "1 Ay"
     case threeMonths = "3 Ay"
-    case sixMonths = "6 Ay"
+    case yearly = "Yıllık"
     case all = "Tümü"
     
     var days: Int? {
@@ -13,7 +13,7 @@ public enum DateRange: String, Codable, CaseIterable {
         case .week: return 7
         case .month: return 30
         case .threeMonths: return 90
-        case .sixMonths: return 180
+        case .yearly: return 365
         case .all: return nil
         }
     }
@@ -31,8 +31,8 @@ public enum DateRange: String, Codable, CaseIterable {
             start = calendar.date(byAdding: .day, value: -30, to: end) ?? end
         case .threeMonths:
             start = calendar.date(byAdding: .day, value: -90, to: end) ?? end
-        case .sixMonths:
-            start = calendar.date(byAdding: .day, value: -180, to: end) ?? end
+        case .yearly:
+            start = calendar.date(byAdding: .day, value: -365, to: end) ?? end
         case .all:
             start = calendar.date(byAdding: .year, value: -1, to: end) ?? end
         }

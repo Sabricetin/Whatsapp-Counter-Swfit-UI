@@ -27,27 +27,82 @@ struct ActivityChartView: View {
             .sorted { $0.date < $1.date }
         
         guard !sortedStats.isEmpty else { return [] }
-        
-        // Son tarihi al
         guard let lastDate = sortedStats.last?.date else { return [] }
         
-        // Seçilen aralığa göre filtrele
+        // Seçilen aralığa göre filtrele ve grupla
         switch selectedDateRange {
-        case .all:
-            // Son 90 günü göster
-            if let startDate = calendar.date(byAdding: .day, value: -90, to: lastDate) {
-                return sortedStats.filter { $0.date >= startDate }
-            }
-            return sortedStats
-            
-        case .week, .month, .threeMonths, .sixMonths:
+        case .week, .month:
+            // Günlük veriler
             guard let days = selectedDateRange.days,
                   let startDate = calendar.date(byAdding: .day, value: -(days - 1), to: lastDate)
-            else {
-                return Array(sortedStats.suffix(30)) // Varsayılan son 30 gün
-            }
+            else { return Array(sortedStats.suffix(30)) }
             return sortedStats.filter { $0.date >= startDate }
+            
+        case .threeMonths:
+            // Haftalık grupla
+            guard let startDate = calendar.date(byAdding: .day, value: -90, to: lastDate) else { return [] }
+            let filteredStats = sortedStats.filter { $0.date >= startDate }
+            return groupStatsByWeek(stats: filteredStats, calendar: calendar)
+            
+        case .yearly:
+            // Aylık grupla
+            guard let startDate = calendar.date(byAdding: .year, value: -1, to: lastDate) else { return [] }
+            let filteredStats = sortedStats.filter { $0.date >= startDate }
+            return groupStatsByMonth(stats: filteredStats, calendar: calendar)
+            
+        case .all:
+            // Yıllık grupla
+            return groupStatsByYear(stats: sortedStats, calendar: calendar)
         }
+    }
+    
+    // Haftalık gruplama fonksiyonu
+    private func groupStatsByWeek(stats: [DailyStats], calendar: Calendar) -> [DailyStats] {
+        var weeklyStats: [Date: Int] = [:]
+        
+        for stat in stats {
+            // Güvenli bir şekilde hafta başlangıcını hesapla
+            let components = calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: stat.date)
+            if let weekStart = calendar.date(from: components) {
+                weeklyStats[weekStart, default: 0] += stat.messageCount
+            }
+        }
+        
+        return weeklyStats.map { date, count in
+            DailyStats(id: UUID(), date: date, messageCount: count)
+        }.sorted { $0.date < $1.date }
+    }
+    
+    // Aylık gruplama fonksiyonu
+    private func groupStatsByMonth(stats: [DailyStats], calendar: Calendar) -> [DailyStats] {
+        var monthlyStats: [Date: Int] = [:]
+        
+        for stat in stats {
+            let components = calendar.dateComponents([.year, .month], from: stat.date)
+            if let monthStart = calendar.date(from: components) {
+                monthlyStats[monthStart, default: 0] += stat.messageCount
+            }
+        }
+        
+        return monthlyStats.map { date, count in
+            DailyStats(id: UUID(), date: date, messageCount: count)
+        }.sorted { $0.date < $1.date }
+    }
+    
+    // Yıllık gruplama fonksiyonu
+    private func groupStatsByYear(stats: [DailyStats], calendar: Calendar) -> [DailyStats] {
+        var yearlyStats: [Date: Int] = [:]
+        
+        for stat in stats {
+            let components = calendar.dateComponents([.year], from: stat.date)
+            if let yearStart = calendar.date(from: components) {
+                yearlyStats[yearStart, default: 0] += stat.messageCount
+            }
+        }
+        
+        return yearlyStats.map { date, count in
+            DailyStats(id: UUID(), date: date, messageCount: count)
+        }.sorted { $0.date < $1.date }
     }
     
     var body: some View {
@@ -102,48 +157,90 @@ struct SimpleDailyChart: View {
         return formatter
     }()
     
-    private func updateDateFormat() {
+    // Tarih aralığı hesaplama için computed property
+    private var dateRange: ClosedRange<Date> {
+        guard let minDate = stats.first?.date,
+              let maxDate = stats.last?.date else {
+            let now = Date()
+            return now...now
+        }
+        return minDate...maxDate
+    }
+    
+    // Tarih formatını seçme
+    private func getDateFormat() -> String {
         switch selectedDateRange {
         case .week, .month:
-            dateFormatter.dateFormat = "d MMM"
-        case .threeMonths, .sixMonths, .all:
-            dateFormatter.dateFormat = "MMM yyyy"
+            return "d MMM"
+        case .threeMonths:
+            return "d MMM"
+        case .yearly, .all:
+            return "MMM yyyy"
         }
     }
     
-    private var dateRange: ClosedRange<Date> {
+    // X ekseni için stride hesaplama
+    private func getAxisStride() -> Calendar.Component {
+        switch selectedDateRange {
+        case .week, .month:
+            return .day
+        case .threeMonths:
+            return .weekOfYear
+        case .yearly, .all:
+            return .month
+        }
+    }
+    
+    private func formatDateRange(for date: Date) -> String {
         let calendar = Calendar.current
-        let now = Date()
         
-        // Varsayılan aralık (son 30 gün)
-        let defaultEndDate = now
-        let defaultStartDate = calendar.date(byAdding: .day, value: -30, to: now) ?? now
-        
-        guard !stats.isEmpty,
-              let firstDate = stats.first?.date,
-              let lastDate = stats.last?.date
-        else {
-            return defaultStartDate...defaultEndDate
+        switch selectedDateRange {
+        case .threeMonths:
+            // Haftanın başlangıç ve bitiş tarihlerini hesapla
+            let weekStart = date // Bu zaten haftanın başlangıcı (groupStatsByWeek'ten geliyor)
+            guard let weekEnd = calendar.date(byAdding: .day, value: 6, to: weekStart) else {
+                return dateFormatter.string(from: date)
+            }
+            
+            // Başlangıç ve bitiş için ayrı formatlayıcılar
+            let startFormatter = DateFormatter()
+            let endFormatter = DateFormatter()
+            startFormatter.locale = Locale(identifier: "tr_TR")
+            endFormatter.locale = Locale(identifier: "tr_TR")
+            
+            // Eğer başlangıç ve bitiş tarihleri farklı aylardaysa
+            let startMonth = calendar.component(.month, from: weekStart)
+            let endMonth = calendar.component(.month, from: weekEnd)
+            
+            if startMonth != endMonth {
+                startFormatter.dateFormat = "d MMM"
+                endFormatter.dateFormat = "d MMM"
+            } else {
+                startFormatter.dateFormat = "d"
+                endFormatter.dateFormat = "d MMM"
+            }
+            
+            let startStr = startFormatter.string(from: weekStart)
+            let endStr = endFormatter.string(from: weekEnd)
+            
+            return "\(startStr) - \(endStr)"
+            
+        case .yearly, .all:
+            dateFormatter.dateFormat = "MMM yyyy"
+            return dateFormatter.string(from: date)
+            
+        default:
+            dateFormatter.dateFormat = "d MMM"
+            return dateFormatter.string(from: date)
         }
-        
-        // Tarih aralığını biraz genişlet
-        let startDate = calendar.date(byAdding: .day, value: -1, to: firstDate) ?? firstDate
-        let endDate = calendar.date(byAdding: .day, value: 1, to: lastDate) ?? lastDate
-        
-        // Geçerlilik kontrolü
-        if startDate <= endDate {
-            return startDate...endDate
-        }
-        
-        return defaultStartDate...defaultEndDate
     }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            // Seçili gün bilgisi
+            // Seçili stat gösterimi güncellendi
             if let stat = selectedStat {
                 HStack {
-                    Text(dateFormatter.string(from: stat.date))
+                    Text(formatDateRange(for: stat.date))
                         .fontWeight(.medium)
                     Spacer()
                     Text("\(stat.messageCount) mesaj")
@@ -157,12 +254,15 @@ struct SimpleDailyChart: View {
                     .foregroundColor(.secondary)
                     .frame(height: 180)
             } else {
+                let maxValue = stats.map { $0.messageCount }.max() ?? 0
+                
                 Chart {
                     ForEach(stats) { stat in
-                        if stat.date <= Date() { // Gelecek tarihleri filtrele
+                        if stat.date <= Date() {
                             BarMark(
                                 x: .value("Tarih", stat.date),
-                                y: .value("Mesaj", max(0, stat.messageCount)) // Negatif değerleri engelle
+                                y: .value("Mesaj", max(0, stat.messageCount)),
+                                width: MarkDimension(floatLiteral: calculateBarWidth())
                             )
                             .foregroundStyle(Color.blue.opacity(0.8))
                             .cornerRadius(4)
@@ -171,36 +271,33 @@ struct SimpleDailyChart: View {
                 }
                 .frame(height: 180)
                 .chartXScale(domain: dateRange)
+                .chartYScale(domain: 0...(maxValue + 5))
                 .chartXAxis {
-                    let stride: Calendar.Component = {
-                        switch selectedDateRange {
-                        case .week:
-                            return .day
-                        case .month:
-                            return stats.count > 30 ? .weekOfMonth : .day
-                        case .threeMonths, .sixMonths:
-                            return .month
-                        case .all:
-                            return .month
-                        }
-                    }()
+                    let stride = getAxisStride()
                     
                     AxisMarks(values: .stride(by: stride)) { value in
-                        if let date = value.as(Date.self),
-                           date <= Date() {
+                        AxisGridLine().foregroundStyle(.gray.opacity(0.2))
+                        AxisTick().foregroundStyle(.gray.opacity(0.2))
+                        if let date = value.as(Date.self) {
                             AxisValueLabel {
                                 Text(dateFormatter.string(from: date))
                                     .font(.caption)
-                                    .rotationEffect(.degrees(-45))
                             }
-                            AxisTick()
-                            AxisGridLine()
                         }
                     }
                 }
                 .chartYAxis {
-                    AxisMarks { _ in
-                        AxisGridLine().foregroundStyle(.gray.opacity(0.2))
+                    AxisMarks { value in
+                        AxisGridLine()
+                            .foregroundStyle(.gray.opacity(0.2))
+                        AxisTick()
+                        if let val = value.as(Int.self) {
+                            AxisValueLabel {
+                                Text("\(val)")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
                     }
                 }
                 .chartOverlay { proxy in
@@ -211,12 +308,9 @@ struct SimpleDailyChart: View {
                             .gesture(
                                 DragGesture(minimumDistance: 0)
                                     .onChanged { value in
-                                        let x = value.location.x
-                                        if let date = proxy.value(atX: x) as Date?,
-                                           date <= Date(), // Gelecek tarihleri filtrele
-                                           let stat = stats.first(where: { Calendar.current.isDate($0.date, inSameDayAs: date) }),
-                                           stat.messageCount >= 0 { // Negatif değerleri filtrele
-                                            selectedStat = stat
+                                        let xPosition = value.location.x
+                                        if let date = proxy.value(atX: xPosition, as: Date.self) {
+                                            handleChartTouch(at: date, proxy: proxy)
                                         }
                                     }
                                     .onEnded { _ in
@@ -226,6 +320,27 @@ struct SimpleDailyChart: View {
                     }
                 }
             }
+        }
+    }
+    
+    private func handleChartTouch(at date: Date, proxy: ChartProxy) {
+        guard date <= Date() else { return }
+        
+        let calendar = Calendar.current
+        selectedStat = stats.first { stat in
+            calendar.isDate(stat.date, inSameDayAs: date)
+        }
+    }
+    
+    // Bar genişliğini hesaplama fonksiyonu
+    private func calculateBarWidth() -> CGFloat {
+        switch selectedDateRange {
+        case .week, .month:
+            return 6 // Günlük görünüm için ince
+        case .threeMonths:
+            return 12 // Haftalık görünüm için orta
+        case .yearly, .all:
+            return 15 // Aylık ve yıllık görünüm için geniş
         }
     }
 }
