@@ -150,6 +150,8 @@ struct SimpleDailyChart: View {
     let selectedDateRange: DateRange
     @State private var selectedStat: DailyStats?
     
+    private let calendar = Calendar.current
+    
     private let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "tr_TR")
@@ -179,15 +181,31 @@ struct SimpleDailyChart: View {
         }
     }
     
-    // X ekseni için stride hesaplama
+    // Bar genişliğini hesaplama fonksiyonu
+    private func calculateBarWidth() -> CGFloat {
+        switch selectedDateRange {
+        case .week:
+            return 10 // Haftalık için sabit genişlik
+        case .month:
+            return 10 // Aylık için sabit genişlik
+        case .threeMonths:
+            return 10 // 3 aylık için sabit genişlik
+        case .yearly, .all:
+            return 10 // Yıllık için sabit genişlik
+        }
+    }
+    
+    // Eksen aralıklarını hesaplama fonksiyonu
     private func getAxisStride() -> Calendar.Component {
         switch selectedDateRange {
-        case .week, .month:
-            return .day
+        case .week:
+            return .day // Her gün için işaret
+        case .month:
+            return .day // Her 3 günde bir işaret
         case .threeMonths:
-            return .weekOfYear
+            return .weekOfYear // Her hafta için işaret
         case .yearly, .all:
-            return .month
+            return .month // Her ay için işaret
         }
     }
     
@@ -235,113 +253,136 @@ struct SimpleDailyChart: View {
         }
     }
     
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            // Seçili stat gösterimi güncellendi
-            if let stat = selectedStat {
-                HStack {
-                    Text(formatDateRange(for: stat.date))
-                        .fontWeight(.medium)
-                    Spacer()
-                    Text("\(stat.messageCount) mesaj")
-                        .foregroundColor(.blue)
-                }
-                .font(.subheadline)
-            }
-            
-            if stats.isEmpty {
-                Text("Veri bulunamadı")
-                    .foregroundColor(.secondary)
-                    .frame(height: 180)
-            } else {
-                let maxValue = stats.map { $0.messageCount }.max() ?? 0
-                
-                Chart {
-                    ForEach(stats) { stat in
-                        if stat.date <= Date() {
-                            BarMark(
-                                x: .value("Tarih", stat.date),
-                                y: .value("Mesaj", max(0, stat.messageCount)),
-                                width: MarkDimension(floatLiteral: calculateBarWidth())
-                            )
-                            .foregroundStyle(Color.blue.opacity(0.8))
-                            .cornerRadius(4)
-                        }
-                    }
-                }
-                .frame(height: 180)
-                .chartXScale(domain: dateRange)
-                .chartYScale(domain: 0...(maxValue + 5))
-                .chartXAxis {
-                    let stride = getAxisStride()
-                    
-                    AxisMarks(values: .stride(by: stride)) { value in
-                        AxisGridLine().foregroundStyle(.gray.opacity(0.2))
-                        AxisTick().foregroundStyle(.gray.opacity(0.2))
-                        if let date = value.as(Date.self) {
-                            AxisValueLabel {
-                                Text(dateFormatter.string(from: date))
-                                    .font(.caption)
-                            }
-                        }
-                    }
-                }
-                .chartYAxis {
-                    AxisMarks { value in
-                        AxisGridLine()
-                            .foregroundStyle(.gray.opacity(0.2))
-                        AxisTick()
-                        if let val = value.as(Int.self) {
-                            AxisValueLabel {
-                                Text("\(val)")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                            }
-                        }
-                    }
-                }
-                .chartOverlay { proxy in
-                    GeometryReader { geometry in
-                        Rectangle()
-                            .fill(.clear)
-                            .contentShape(Rectangle())
-                            .gesture(
-                                DragGesture(minimumDistance: 0)
-                                    .onChanged { value in
-                                        let xPosition = value.location.x
-                                        if let date = proxy.value(atX: xPosition, as: Date.self) {
-                                            handleChartTouch(at: date, proxy: proxy)
-                                        }
-                                    }
-                                    .onEnded { _ in
-                                        selectedStat = nil
-                                    }
-                            )
-                    }
-                }
-            }
-        }
-    }
-    
-    private func handleChartTouch(at date: Date, proxy: ChartProxy) {
-        guard date <= Date() else { return }
+    // Dokunma hassasiyetini ayarlama fonksiyonu
+    private func handleChartTouch(at location: CGPoint, proxy: ChartProxy, geometry: GeometryProxy) {
+        let relativeXPosition = location.x
         
-        let calendar = Calendar.current
-        selectedStat = stats.first { stat in
-            calendar.isDate(stat.date, inSameDayAs: date)
+        // Dokunma toleransını ayarla (yıllık görünüm için daha geniş)
+        let touchTolerance: CGFloat = selectedDateRange == .yearly || selectedDateRange == .all ? 20 : 10
+        
+        if let date = proxy.value(atX: relativeXPosition) as Date? {
+            let calendar = Calendar.current
+            
+            // Seçilen tarihe en yakın veriyi bul
+            selectedStat = stats.min(by: { stat1, stat2 in
+                let diff1 = abs(calendar.startOfDay(for: stat1.date).timeIntervalSince(date))
+                let diff2 = abs(calendar.startOfDay(for: stat2.date).timeIntervalSince(date))
+                return diff1 < diff2
+            })
         }
     }
     
-    // Bar genişliğini hesaplama fonksiyonu
-    private func calculateBarWidth() -> CGFloat {
-        switch selectedDateRange {
-        case .week, .month:
-            return 6 // Günlük görünüm için ince
-        case .threeMonths:
-            return 12 // Haftalık görünüm için orta
-        case .yearly, .all:
-            return 15 // Aylık ve yıllık görünüm için geniş
+    var body: some View {
+        GeometryReader { geometry in
+            VStack(alignment: .leading, spacing: 8) {
+                // Seçili stat gösterimi
+                if let stat = selectedStat {
+                    HStack {
+                        Text(formatDateRange(for: stat.date))
+                            .fontWeight(.medium)
+                        Spacer()
+                        Text("\(stat.messageCount) mesaj")
+                            .foregroundColor(.blue)
+                    }
+                    .font(.subheadline)
+                    .padding(.horizontal, 4)
+                    .padding(.vertical, 6)
+                    .background(Color.gray.opacity(0.1))
+                    .cornerRadius(8)
+                } else {
+                    // Boş alan bırak ama yüksekliği koru
+                    Color.clear
+                        .frame(height: 31) // HStack'in yaklaşık yüksekliği
+                }
+                
+                if stats.isEmpty {
+                    Text("Veri bulunamadı")
+                        .foregroundColor(.secondary)
+                        .frame(height: 200)
+                } else {
+                    let maxValue = stats.map { $0.messageCount }.max() ?? 0
+                    
+                    Chart {
+                        ForEach(stats) { stat in
+                            if stat.date <= Date() {
+                                BarMark(
+                                    x: .value("Tarih", stat.date),
+                                    y: .value("Mesaj", max(0, stat.messageCount)),
+                                    width: MarkDimension(floatLiteral: calculateBarWidth())
+                                )
+                                .foregroundStyle(selectedStat?.id == stat.id ? 
+                                    Color.blue : Color.blue.opacity(0.8))
+                                .shadow(color: selectedStat?.id == stat.id ? 
+                                    Color.blue.opacity(0.3) : Color.clear, 
+                                    radius: 5)
+                                .cornerRadius(4)
+                            }
+                        }
+                    }
+                    .frame(
+                        width: geometry.size.width - 60,
+                        height: 200
+                    )
+                    .chartXScale(
+                        domain: dateRange,
+                        range: .plotDimension(padding: 30)
+                    )
+                    .chartYScale(domain: 0...(maxValue + 5))
+                    .chartPlotStyle { plotArea in
+                        plotArea
+                            .background(Color.gray.opacity(0.1))
+                            .border(Color.gray.opacity(0.2))
+                    }
+                    .chartXAxis {
+                        let stride = getAxisStride()
+                        AxisMarks(values: .stride(by: stride)) { _ in
+                            AxisGridLine().foregroundStyle(.gray.opacity(0.2))
+                            // X ekseni etiketlerini kaldır, sadece çizgileri göster
+                        }
+                    }
+                    .chartYAxis {
+                        AxisMarks { value in
+                            AxisGridLine().foregroundStyle(.gray.opacity(0.2))
+                            if let val = value.as(Int.self) {
+                                AxisValueLabel {
+                                    Text("\(val)")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+                            }
+                        }
+                    }
+                    .chartOverlay { proxy in
+                        GeometryReader { geometry in
+                            Rectangle()
+                                .fill(.clear)
+                                .contentShape(Rectangle())
+                                .gesture(
+                                    DragGesture(minimumDistance: 0)
+                                        .onChanged { value in
+                                            handleChartTouch(at: value.location, proxy: proxy, geometry: geometry)
+                                        }
+                                        .onEnded { _ in
+                                            // İsteğe bağlı: Seçimi kaldırmak için yorumu kaldırın
+                                            // selectedStat = nil
+                                        }
+                                )
+                        }
+                    }
+                }
+            }
+            .padding(.horizontal, 30)
+            .padding(.vertical, 10)
+            .background(Color(.systemBackground))
+            .cornerRadius(12)
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+            )
+            .shadow(color: .gray.opacity(0.1), radius: 5, x: 0, y: 2)
+            .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
         }
+        .frame(height: 280)
     }
 }
 
