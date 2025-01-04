@@ -89,8 +89,6 @@ struct AnalysisView: View {
                         dailyStats: analysis.dailyStats,
                         hourlyStats: analysis.hourlyStats
                     )
-                    
-                    MessageChart(data: viewModel.chartData)
                 }
                 
                 DetailsList(details: viewModel.details)
@@ -429,125 +427,6 @@ struct AnalysisView: View {
                 }
             }
         }
-    }
-}
-
-@available(iOS 16.0, *)
-struct MessageChart: View {
-    let data: [ChartViewModel]
-    @State private var selectedDate: Date?
-    @State private var selectedValue: Int?
-    
-    private let dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "dd MMM"
-        formatter.locale = Locale(identifier: "tr_TR")
-        return formatter
-    }()
-    
-    // Tarih aralığını hesapla
-    private var dateRange: ClosedRange<Date> {
-        let sortedDates = data.map { $0.date }.sorted()
-        if let minDate = sortedDates.first,
-           let maxDate = sortedDates.last {
-            return minDate...maxDate
-        }
-        return Date()...Date()
-    }
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Mesaj Dağılımı")
-                .font(.headline)
-            
-            // Seçili değer gösterimi
-            if let date = selectedDate, let value = selectedValue {
-                HStack {
-                    Text(dateFormatter.string(from: date))
-                        .fontWeight(.medium)
-                    Text("\(value) mesaj")
-                        .foregroundColor(.secondary)
-                }
-                .font(.subheadline)
-                .padding(.vertical, 4)
-            }
-            
-            Chart {
-                ForEach(data) { item in
-                    BarMark(
-                        x: .value("Tarih", item.date),
-                        y: .value("Mesaj", item.messageCount)
-                    )
-                    .foregroundStyle(Color.blue.gradient)
-                    .cornerRadius(4)
-                }
-                
-                if let selectedDate {
-                    RuleMark(x: .value("Seçili", selectedDate))
-                        .foregroundStyle(.gray.opacity(0.3))
-                        .lineStyle(.init(lineWidth: 2))
-                        .annotation(position: .top) {
-                            if let value = selectedValue {
-                                Text("\(value)")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                            }
-                        }
-                }
-            }
-            .frame(height: 200)
-            .chartXScale(domain: dateRange)
-            .chartXAxis {
-                AxisMarks(values: .stride(by: .day)) { value in
-                    AxisGridLine()
-                    AxisTick()
-                    // Boş etiket yerine görünmez etiket kullan
-                    AxisValueLabel {
-                        Color.clear
-                            .frame(height: 0)
-                    }
-                }
-            }
-            .chartYAxis {
-                AxisMarks(position: .leading)
-            }
-            .chartOverlay { proxy in
-                GeometryReader { geometry in
-                    Rectangle()
-                        .fill(.clear)
-                        .contentShape(Rectangle())
-                        .gesture(
-                            DragGesture(minimumDistance: 0)
-                                .onChanged { value in
-                                    let x = value.location.x - geometry[proxy.plotAreaFrame].origin.x
-                                    guard let date = proxy.value(atX: x, as: Date.self) else { return }
-                                    
-                                    guard let index = data.firstIndex(where: { Calendar.current.isDate($0.date, inSameDayAs: date) }) else { return }
-                                    selectedDate = data[index].date
-                                    selectedValue = data[index].messageCount
-                                }
-                                .onEnded { _ in
-                                    selectedDate = nil
-                                    selectedValue = nil
-                                }
-                        )
-                }
-            }
-            
-            // Alt bilgi
-            HStack {
-                Image(systemName: "info.circle.fill")
-                    .foregroundColor(.blue.opacity(0.7))
-                Text("Grafiği incelemek için üzerine dokunun")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-            }
-            .padding(.top, 8)
-        }
-        .padding()
-        .background(Color(.systemBackground))
-        .cornerRadius(12)
-        .shadow(radius: 2)
     }
 }
 

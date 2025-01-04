@@ -108,35 +108,49 @@ struct ActivityChartView: View {
     var body: some View {
         if #available(iOS 16.0, *) {
             VStack(spacing: 16) {
-                HStack {
-                    // Zaman aralığı seçici
-                    Picker("", selection: $selectedTimeFrame) {
-                        Text("Günlük").tag(TimeFrame.daily)
-                        Text("Saatlik").tag(TimeFrame.hourly)
-                    }
-                    .pickerStyle(SegmentedPickerStyle())
+                VStack(spacing: 16) {
+                    // Başlık
+                    Text("Günlük & Saatlik Mesaj Dağılımı")
+                        .font(.headline)
+                        .fontWeight(.semibold)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.bottom, 4)
                     
-                    if selectedTimeFrame == .daily {
-                        // Tarih aralığı seçici
-                        Picker("", selection: $selectedDateRange) {
-                            ForEach(DateRange.allCases, id: \.self) { range in
-                                Text(range.rawValue).tag(range)
-                            }
+                    // Picker'ları içeren HStack
+                    HStack {
+                        // Zaman aralığı seçici
+                        Picker("", selection: $selectedTimeFrame) {
+                            Text("Günlük").tag(TimeFrame.daily)
+                            Text("Saatlik").tag(TimeFrame.hourly)
                         }
-                        .pickerStyle(MenuPickerStyle())
+                        .pickerStyle(SegmentedPickerStyle())
+                        .frame(width: 150)
+                        
+                        Spacer()
+                        
+                        if selectedTimeFrame == .daily {
+                            // Tarih aralığı seçici
+                            Picker("", selection: $selectedDateRange) {
+                                ForEach(DateRange.allCases, id: \.self) { range in
+                                    Text(range.rawValue).tag(range)
+                                }
+                            }
+                            .pickerStyle(MenuPickerStyle())
+                        }
+                    }
+                    
+                    // Seçilen zaman aralığına göre grafik
+                    if selectedTimeFrame == .daily {
+                        SimpleDailyChart(stats: filteredDailyStats, selectedDateRange: selectedDateRange)
+                    } else {
+                        SimpleHourlyChart(stats: hourlyStats)
                     }
                 }
-                
-                // Seçilen zaman aralığına göre grafik
-                if selectedTimeFrame == .daily {
-                    SimpleDailyChart(stats: filteredDailyStats, selectedDateRange: selectedDateRange)
-                } else {
-                    SimpleHourlyChart(stats: hourlyStats)
-                }
+                .padding()
+                .background(Color(.systemBackground))
+                .cornerRadius(12)
+                .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
             }
-            .padding()
-            .background(Color(.systemBackground))
-            .cornerRadius(12)
         } else {
             Text("iOS 16 veya üstü gerekli")
                 .foregroundColor(.secondary)
@@ -320,7 +334,7 @@ struct SimpleDailyChart: View {
                         }
                     }
                     .frame(
-                        width: geometry.size.width - 60,
+                        width: geometry.size.width - 1,
                         height: 200
                     )
                     .chartXScale(
@@ -371,7 +385,7 @@ struct SimpleDailyChart: View {
                     }
                 }
             }
-            .padding(.horizontal, 30)
+            .padding(.horizontal, 10)
             .padding(.vertical, 10)
             .background(Color(.systemBackground))
             .cornerRadius(12)
@@ -392,69 +406,97 @@ struct SimpleHourlyChart: View {
     @State private var selectedHour: HourlyStats?
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 12) {
             // Seçili saat bilgisi
             if let stat = selectedHour {
                 HStack {
                     Text("\(stat.hour):00")
+                        .font(.subheadline)
                         .fontWeight(.medium)
                     Spacer()
                     Text("\(stat.messageCount) mesaj")
+                        .font(.subheadline)
                         .foregroundColor(.blue)
                 }
-                .font(.subheadline)
+                .padding(.vertical, 8)
+                .padding(.horizontal, 12)
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color.blue.opacity(0.1))
+                )
             }
             
-            // Basit çizgi grafik
-            Chart {
-                ForEach(stats) { stat in
+            // Grafik kartı
+            VStack {
+                Chart(stats) { stat in
                     LineMark(
                         x: .value("Saat", stat.hour),
                         y: .value("Mesaj", stat.messageCount)
                     )
                     .foregroundStyle(Color.blue.opacity(0.8))
-                    .interpolationMethod(.catmullRom)
+                    .interpolationMethod(.monotone)
+                    .lineStyle(StrokeStyle(lineWidth: 2))
+
+                    PointMark(
+                        x: .value("Saat", stat.hour),
+                        y: .value("Mesaj", stat.messageCount)
+                    )
+                    .symbolSize(120)
+                    .foregroundStyle(selectedHour?.hour == stat.hour ? Color.blue : .clear)
+                    .symbol(.circle)
+                    .annotation(position: .overlay) {
+                        Circle()
+                            .stroke(Color.blue, lineWidth: 1.75)
+                            .frame(width: 7, height: 7)
+                    }
                 }
-                .symbol(Circle())
-            }
-            .frame(height: 180)
-            .chartXAxis {
-                AxisMarks(values: .stride(by: 6)) { value in
-                    AxisGridLine()
-                    AxisTick()
-                    AxisValueLabel {
-                        if let hour = value.as(Int.self) {
-                            Text("\(hour):00")
-                                .font(.caption)
+                .frame(height: 200)
+                .chartYAxis {
+                    AxisMarks { _ in
+                        AxisGridLine().foregroundStyle(.gray.opacity(0.2))
+                    }
+                }
+                .chartXAxis {
+                    AxisMarks(values: .stride(by: 4)) { value in
+                        AxisGridLine()
+                        AxisTick()
+                        AxisValueLabel {
+                            if let hour = value.as(Int.self) {
+                                Text("\(hour):00")
+                                    .font(.caption)
+                            }
                         }
                     }
                 }
-            }
-            .chartYAxis {
-                AxisMarks { _ in
-                    AxisGridLine().foregroundStyle(.gray.opacity(0.2))
+                .chartPlotStyle { plotArea in
+                    plotArea
+                        .background(Color.gray.opacity(0.05))
                 }
-            }
-            .chartOverlay { proxy in
-                GeometryReader { geometry in
-                    Rectangle()
-                        .fill(.clear)
-                        .contentShape(Rectangle())
-                        .gesture(
-                            DragGesture(minimumDistance: 0)
-                                .onChanged { value in
-                                    let x = value.location.x
-                                    if let hour = proxy.value(atX: x) as Int?,
-                                       let stat = stats.first(where: { $0.hour == hour }) {
-                                        selectedHour = stat
+                .chartOverlay { proxy in
+                    GeometryReader { geometry in
+                        Rectangle()
+                            .fill(.clear)
+                            .contentShape(Rectangle())
+                            .gesture(
+                                DragGesture(minimumDistance: 0)
+                                    .onChanged { value in
+                                        let xPosition = value.location.x
+                                        if let hour = proxy.value(atX: xPosition) as Int?,
+                                           let stat = stats.first(where: { $0.hour == hour }) {
+                                            selectedHour = stat
+                                        }
                                     }
-                                }
-                                .onEnded { _ in
-                                    selectedHour = nil
-                                }
-                        )
+                                    .onEnded { _ in
+                                        selectedHour = nil
+                                    }
+                            )
+                    }
                 }
             }
+            .padding()
+            .background(Color(.systemBackground))
+            .cornerRadius(12)
+            .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
         }
     }
 } 
