@@ -105,6 +105,55 @@ struct ActivityChartView: View {
         }.sorted { $0.date < $1.date }
     }
     
+    var filteredHourlyStats: [HourlyStats] {
+        guard !hourlyStats.isEmpty else { return [] }
+        
+        let calendar = Calendar.current
+        let now = Date()
+        
+        // Seçilen tarih aralığına göre filtreleme
+        let filteredDaily = dailyStats.filter { stat in
+            guard let date = calendar.startOfDay(for: stat.date) as Date? else { return false }
+            return date <= now && stat.messageCount >= 0
+        }.sorted { $0.date < $1.date }
+        
+        guard !filteredDaily.isEmpty,
+              let lastDate = filteredDaily.last?.date else { return [] }
+        
+        // Tarih aralığını belirle
+        let startDate: Date
+        switch selectedDateRange {
+        case .week:
+            startDate = calendar.date(byAdding: .day, value: -7, to: lastDate) ?? lastDate
+        case .month:
+            startDate = calendar.date(byAdding: .month, value: -1, to: lastDate) ?? lastDate
+        case .threeMonths:
+            startDate = calendar.date(byAdding: .month, value: -3, to: lastDate) ?? lastDate
+        case .yearly:
+            startDate = calendar.date(byAdding: .year, value: -1, to: lastDate) ?? lastDate
+        case .all:
+            startDate = filteredDaily.first?.date ?? lastDate
+        }
+        
+        // Seçilen tarih aralığındaki mesajları filtrele
+        let filteredMessages = filteredDaily.filter { $0.date >= startDate && $0.date <= lastDate }
+        
+        // Toplam mesaj sayısını hesapla
+        let totalMessages = filteredMessages.reduce(0) { $0 + $1.messageCount }
+        
+        // Her saat için oransal dağılımı hesapla
+        return hourlyStats.map { hourStat -> HourlyStats in
+            let hourPercentage = Double(hourStat.messageCount) / Double(hourlyStats.reduce(0) { $0 + $1.messageCount })
+            let messageCount = Int(Double(totalMessages) * hourPercentage)
+            
+            return HourlyStats(
+                id: UUID(),
+                hour: hourStat.hour,
+                messageCount: messageCount
+            )
+        }.sorted { $0.hour < $1.hour }
+    }
+    
     var body: some View {
         if #available(iOS 16.0, *) {
             VStack(spacing: 16) {
@@ -143,7 +192,7 @@ struct ActivityChartView: View {
                     if selectedTimeFrame == .daily {
                         SimpleDailyChart(stats: filteredDailyStats, selectedDateRange: selectedDateRange)
                     } else {
-                        SimpleHourlyChart(stats: hourlyStats)
+                        SimpleHourlyChart(stats: filteredHourlyStats)
                     }
                 }
                 .padding()
@@ -324,10 +373,10 @@ struct SimpleDailyChart: View {
                                     y: .value("Mesaj", max(0, stat.messageCount)),
                                     width: MarkDimension(floatLiteral: calculateBarWidth())
                                 )
-                                .foregroundStyle(selectedStat?.id == stat.id ? 
+                                .foregroundStyle(selectedStat?.id == stat.id ?
                                     Color.blue : Color.blue.opacity(0.8))
-                                .shadow(color: selectedStat?.id == stat.id ? 
-                                    Color.blue.opacity(0.3) : Color.clear, 
+                                .shadow(color: selectedStat?.id == stat.id ?
+                                    Color.blue.opacity(0.3) : Color.clear,
                                     radius: 5)
                                 .cornerRadius(4)
                             }
