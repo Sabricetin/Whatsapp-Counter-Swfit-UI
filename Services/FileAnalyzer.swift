@@ -390,6 +390,7 @@ class FileAnalyzer {
             )
         }
     }
+     
     
     func analyzeMediaZip(at url: URL) async throws -> MediaStats {
         logger.info("Starting media analysis of ZIP file: \(url.lastPathComponent)")
