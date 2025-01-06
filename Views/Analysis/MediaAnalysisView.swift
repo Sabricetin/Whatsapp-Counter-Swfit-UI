@@ -184,42 +184,99 @@ struct MediaPieChartView: View {
                             angularInset: 1.5
                         )
                         .foregroundStyle(by: .value("Katılımcı", participant))
-                        .opacity(selectedParticipant == nil ? 1 : (selectedParticipant == participant ? 1 : 0.3))
-                        .annotation(position: .overlay) {
-                            Text("\(Int(percentage))%")
-                                .font(.system(size: 12, weight: .bold))
-                                .foregroundColor(.white)
-                                .shadow(color: .black.opacity(0.3), radius: 1, x: 0, y: 1)
-                        }
                     }
                 }
             }
             .frame(height: 240)
-            .chartLegend(position: .bottom, spacing: 20)
-            
-            if let selectedParticipant,
-               let stats = mediaByParticipant[selectedParticipant] {
-                let total = stats.imageCount + stats.videoCount
-                let percentage = Double(total) / Double(totalMedia) * 100
-                
-                HStack {
-                    Text(selectedParticipant)
-                        .font(.headline)
-                    Spacer()
-                    Text("\(total) medya")
-                        .foregroundColor(.secondary)
+            .chartLegend(position: .bottom) {
+                FlowLayout(alignment: .leading, spacing: 8) {
+                    ForEach(Array(mediaByParticipant.keys.sorted()), id: \.self) { participant in
+                        if let stats = mediaByParticipant[participant] {
+                            HStack(spacing: 4) {
+                                Circle()
+                                    .fill(Color.blue) // Chart rengi ile eşleşecek
+                                    .frame(width: 8, height: 8)
+                                Text(participant)
+                                    .font(.caption)
+                            }
+                            .padding(.vertical, 2)
+                            .padding(.horizontal, 4)
+                        }
+                    }
                 }
-                .padding(.top, 8)
-                
-                Text("Toplam medyanın %\(String(format: "%.1f", percentage))'i")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
+                .padding(.horizontal)
             }
         }
         .padding()
         .background(Color(.systemBackground))
         .cornerRadius(10)
         .shadow(radius: 2)
+    }
+}
+
+// FlowLayout yapısı - uzun isimlerin alt satıra geçmesini sağlar
+struct FlowLayout: Layout {
+    var alignment: HorizontalAlignment = .leading
+    var spacing: CGFloat = 8
+    
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        let result = FlowResult(
+            in: proposal.width ?? 0,
+            subviews: subviews,
+            alignment: alignment,
+            spacing: spacing
+        )
+        return result.size
+    }
+    
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        let result = FlowResult(
+            in: bounds.width,
+            subviews: subviews,
+            alignment: alignment,
+            spacing: spacing
+        )
+        for (index, subview) in subviews.enumerated() {
+            subview.place(at: CGPoint(x: bounds.minX + result.positions[index].x,
+                                    y: bounds.minY + result.positions[index].y),
+                         proposal: ProposedViewSize(result.sizes[index]))
+        }
+    }
+    
+    struct FlowResult {
+        var positions: [CGPoint] = []
+        var sizes: [CGSize] = []
+        var size: CGSize = .zero
+        
+        init(in maxWidth: CGFloat, subviews: Subviews, alignment: HorizontalAlignment, spacing: CGFloat) {
+            var currentX: CGFloat = 0
+            var currentY: CGFloat = 0
+            var lineHeight: CGFloat = 0
+            var lineItems: [(CGPoint, CGSize)] = []
+            
+            for subview in subviews {
+                let size = subview.sizeThatFits(.unspecified)
+                if currentX + size.width > maxWidth, !lineItems.isEmpty {
+                    // Yeni satıra geç
+                    positions += lineItems.map { $0.0 }
+                    sizes += lineItems.map { $0.1 }
+                    currentX = 0
+                    currentY += lineHeight + spacing
+                    lineItems.removeAll()
+                    lineHeight = 0
+                }
+                
+                lineItems.append((CGPoint(x: currentX, y: currentY), size))
+                currentX += size.width + spacing
+                lineHeight = max(lineHeight, size.height)
+                self.size.width = max(self.size.width, currentX)
+            }
+            
+            // Son satırı ekle
+            positions += lineItems.map { $0.0 }
+            sizes += lineItems.map { $0.1 }
+            self.size.height = currentY + lineHeight
+        }
     }
 }
 

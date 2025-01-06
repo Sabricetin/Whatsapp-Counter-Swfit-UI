@@ -53,7 +53,22 @@ struct PieChartView: View {
                 }
             }
             .frame(height: 240)
-            .chartLegend(position: .bottom, spacing: 20)
+            .chartLegend(position: .bottom, spacing: 20) {
+                FlowLayout(alignment: .leading, spacing: 8) {
+                    ForEach(participants) { participant in
+                        HStack(spacing: 4) {
+                            Circle()
+                                .fill(Color.blue) // Chart color will match automatically
+                                .frame(width: 8, height: 8)
+                            Text(participant.name)
+                                .font(.caption)
+                        }
+                        .padding(.vertical, 2)
+                        .padding(.horizontal, 4)
+                    }
+                }
+                .padding(.horizontal)
+            }
             .chartAngleSelection(value: $selectedIndex)
             .scaleEffect(scale)
             
@@ -104,4 +119,4 @@ private struct ParticipantChartData: Identifiable {
     let name: String
     let messageCount: Int
     let messagePercentage: Double
-} 
+}
